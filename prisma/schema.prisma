@@ -1,0 +1,330 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model Account {
+    accountId String   @id @default(cuid())
+    email     String
+    password  String
+    role      Role     @default(ADMIN)
+    createdAt DateTime @default(now())
+    udpatedAt DateTime @updatedAt
+
+    @@unique([email])
+    @@index([email])
+}
+
+model AppliedJob {
+    jobId       String @id @default(cuid())
+    fullName    String @default("none")
+    email       String @default("none")
+    job         String @default("none")
+    jobCode     String @default("none")
+    resume      String @default("none")
+    coverLetter String @default("none")
+}
+
+model Employ {
+    employId     String @id @default(cuid())
+    fullName     String @default("none")
+    skills       String @default("none")
+    contribution String @default("none")
+}
+
+model User {
+    userId            String              @id @default(cuid())
+    fullName          String              @default("none")
+    phone             String              @default("none")
+    email             String
+    address           String              @default("none")
+    password          String              @default("none")
+    registerType      RegisterType        @default(None)
+    status            Status              @default(Pending)
+    Artisan           Artisan[]
+    Business          Business[]
+    Institute         Institute[]
+    BuyerMembership   BuyerMembership[]
+    CorpoMembership   CorpoMembership[]
+    SponsorMembership SponsorMembership[]
+
+    @@unique([email])
+    @@index([email])
+}
+
+model Artisan {
+    artisanId       String          @id @default(cuid())
+    craftSpecialty  String          @default("none")
+    craftSkill      SkillLevel      @default(None)
+    craftExperience Int             @default(0)
+    craftAward      String          @default("none")
+    market          MarketType      @default(None)
+    documents       String[]        @default([])
+    status          String          @default("active")
+    userId          String
+    listingCriteria String
+    criteria        LisitingCritera @relation(fields: [listingCriteria], references: [criteraId], onDelete: Cascade, onUpdate: Cascade)
+    user            User            @relation(fields: [userId], references: [userId], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model Business {
+    businessId       String          @id @default(cuid())
+    businessName     String          @default("none")
+    businessEmail    String
+    businessAddress  String          @default("none")
+    businessType     BusinessLevel   @default(None)
+    businessSold     String          @default("none")
+    businessEmployee Int             @default(0)
+    documents        String[]        @default([])
+    status           String          @default("active")
+    listingCriteria  String
+    criteria         LisitingCritera @relation(fields: [listingCriteria], references: [criteraId], onDelete: Cascade, onUpdate: Cascade)
+    userId           String
+    user             User            @relation(fields: [userId], references: [userId], onDelete: Cascade, onUpdate: Cascade)
+
+    @@unique([businessEmail])
+    @@index([businessEmail])
+}
+
+model Institute {
+    instituteId      String          @id @default(cuid())
+    instituteName    String          @default("none")
+    instituteEmail   String
+    instituteType    InstitutionType @default(None)
+    instituteAddress String          @default("none")
+    instituteMission String          @default("none")
+    instituteRep     String          @default("none")
+    repDes           String          @default("none")
+    documents        String[]        @default([])
+    status           String          @default("active")
+    listingCriteria  String
+    criteria         LisitingCritera @relation(fields: [listingCriteria], references: [criteraId], onDelete: Cascade, onUpdate: Cascade)
+    userId           String
+    user             User            @relation(fields: [userId], references: [userId], onDelete: Cascade, onUpdate: Cascade)
+
+    @@unique([instituteEmail])
+    @@index([instituteEmail])
+}
+
+model BuyerMembership {
+    buyerMemberId       String   @id @default(cuid())
+    buyerType           String   @default("none")
+    businessName        String   @default("none")
+    businessType        String   @default("none")
+    taxId               String   @default("none")
+    country             String   @default("none")
+    website             String   @default("none")
+    productInterest     String[] @default([])
+    orderVolume         String   @default("none")
+    authentication      String   @default("none")
+    traceability        String   @default("none")
+    sustainability      String[] @default([])
+    source              String   @default("none")
+    newsletter          Boolean  @default(false)
+    specialRequirements String   @default("none")
+    terms               Boolean  @default(false)
+    userId              String
+    user                User     @relation(fields: [userId], references: [userId], onUpdate: Cascade, onDelete: Cascade)
+    createdAt           DateTime @default(now())
+    updatedAt           DateTime @updatedAt
+}
+
+model CorpoMembership {
+    corpoMemberId String @id @default(cuid())
+
+    // Institution Information
+    institutionName String @default("none")
+    institutionType String @default("none")
+    industry        String @default("none")
+    yearEstablished Int    @default(0000)
+    taxId           String @default("none")
+    primaryContact  String @default("none")
+    contactEmail    String @default("none")
+    contactPhone    String @default("none")
+    website         String @default("none")
+
+    // Business Address
+    headquartersAddress String @default("none")
+    additionalLocations String @default("none")
+
+    // Partnership Interest
+    partnershipType  String   @default("none")
+    partnershipGoals String   @default("none")
+    targetProducts   String[] @default([])
+
+    // CSR and Sustainability
+    csrInterest             String @default("No")
+    csrInitiatives          String @default("none")
+    sustainabilityPractices String @default("none")
+
+    // Verification and Documentation
+    businessLicense String @default("none")
+    proofOfTaxID    String @default("none")
+    references      String @default("none")
+
+    // Marketing and Engagement
+    engagementChannels  String @default("none")
+    customerDemographic String @default("none")
+    brandMission        String @default("none")
+
+    // Additional Information
+    specificRequirements String @default("none")
+    challenges           String @default("none")
+    additionalComments   String @default("none")
+
+    // Terms & Conditions
+    terms Boolean @default(false)
+
+    userId String
+    user   User   @relation(fields: [userId], references: [userId], onUpdate: Cascade, onDelete: Cascade)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model SponsorMembership {
+    sponsorshipId String @id @default(cuid())
+
+    // Sponsor Information
+    sponsorName   String @default("none")
+    contactPerson String @default("none")
+    email         String @unique
+    phone         String @default("none")
+    socialLinks   String @default("none")
+
+    // Sponsor Type
+    sponsorType String @default("none")
+    industry    String @default("none")
+
+    // Sponsorship Goals and Interests
+    sponsorshipGoal String @default("none")
+    objectives      String @default("none")
+    focusArea       String @default("none")
+
+    // Sponsorship Tier
+    tier        String @default("none")
+    budgetRange String @default("none")
+
+    // Sponsorship Options
+    sponsorshipChannel   String @default("none")
+    eventInterest        String @default("No")
+    productCustomization String @default("none")
+
+    // CSR and Sustainability
+    csrInterest             String @default("No")
+    pastCSREfforts          String @default("none")
+    sustainabilityPractices String @default("none")
+
+    // Marketing and Branding Preferences
+    brandingOptions      String[] @default([])
+    socialHandles        String   @default("none")
+    communicationChannel String   @default("none")
+
+    // Impact and Reporting Requirements
+    impactMetrics   String[] @default([])
+    reportFrequency String   @default("none")
+    publicUse       String   @default("No")
+
+    // Additional Information
+    specialRequirements String @default("none")
+    additionalComments  String @default("none")
+
+    // Terms and Conditions
+    terms Boolean @default(false)
+
+    userId String
+    user   User   @relation(fields: [userId], references: [userId], onUpdate: Cascade, onDelete: Cascade)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model LisitingCritera {
+    criteraId                 String      @id @default(cuid())
+    sourceOfMaterial          String      @default("none")
+    craftingProcess           String      @default("none")
+    sustainablePractices      Boolean     @default(false)
+    sustainabledescription    String      @default("none")
+    fairWage                  Boolean     @default(false)
+    genderSuport              Boolean     @default(false)
+    womenPercentage           Int         @default(0)
+    workplaceuphold           Boolean     @default(false)
+    workplaceDescription      String      @default("none")
+    childLabour               Boolean     @default(false)
+    fairTrade                 Boolean     @default(false)
+    fairtradeDoc              String[]    @default([])
+    giHold                    Boolean     @default(false)
+    giNumber                  String      @default("none")
+    giDoc                     String      @default("none")
+    blockChain                Boolean     @default(false)
+    blockChainDoc             String[]    @default([])
+    ethics                    Boolean     @default(false)
+    qualityReview             Boolean     @default(false)
+    profilePermission         Boolean     @default(false)
+    complianceAcknowledgement Boolean     @default(false)
+    rank                      Ranks       @default(None)
+    Artisan                   Artisan[]
+    Business                  Business[]
+    Institute                 Institute[]
+}
+
+enum Role {
+    ADMIN
+    SUPERADMIN
+}
+
+enum Ranks {
+    None
+    Gold
+    Silver
+    Bronze
+}
+
+enum InstitutionType {
+    None
+    Governance
+    NGO
+    Training_Body
+    Educational_Body
+}
+
+enum BusinessLevel {
+    None
+    Large_Enterprice
+    Mid_sized_Business
+    Small_Business
+    Startup
+}
+
+enum SkillLevel {
+    None
+    Expert
+    Advanced
+    Beginner
+}
+
+enum RegisterType {
+    None
+    Artisan
+    Business
+    Institution
+    BuyerMembership
+    CorpoMembership
+    SponsorMembership
+}
+
+enum MarketType {
+    None
+    Local
+    National
+    International
+}
+
+enum Status {
+    Pending
+    Actice
+}
