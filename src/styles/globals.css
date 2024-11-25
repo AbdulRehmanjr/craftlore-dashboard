@@ -5,63 +5,101 @@
 @layer base {
   :root {
     /* Core colors */
-    --primary: 212 99% 24%; /* #013879 in HSL */
-    --primary-foreground: 0 0% 98%; /* Light text for primary */
-    --secondary: 21 91% 55%; /* #f56425 in HSL */
-    --secondary-foreground: 0 0% 98%; /* Light text for secondary */
+    --primary: 212 99% 24%;
+    /* #013879 in HSL */
+    --primary-foreground: 0 0% 98%;
+    /* Light text for primary */
+    --secondary: 21 91% 55%;
+    /* #f56425 in HSL */
+    --secondary-foreground: 0 0% 98%;
+    /* Light text for secondary */
 
     /* Backgrounds and Foregrounds */
-    --background: 212 99% 95%; /* Very light shade of primary */
-    --foreground: 212 99% 10%; /* Darker shade for primary text */
-    --card: 212 99% 98%; /* Lightest tone of primary */
-    --card-foreground: 212 99% 10%; /* Darker primary color */
-    --popover: 212 99% 95%; /* Light shade of primary */
-    --popover-foreground: 212 99% 10%; /* Darker primary for popover text */
+    --background: 212 99% 95%;
+    /* Very light shade of primary */
+    --foreground: 212 99% 10%;
+    /* Darker shade for primary text */
+    --card: 212 99% 98%;
+    /* Lightest tone of primary */
+    --card-foreground: 212 99% 10%;
+    /* Darker primary color */
+    --popover: 212 99% 95%;
+    /* Light shade of primary */
+    --popover-foreground: 212 99% 10%;
+    /* Darker primary for popover text */
 
     /* Supporting colors */
-    --muted: 21 91% 94%; /* Very light shade of secondary for muted backgrounds */
-    --muted-foreground: 212 99% 50%; /* Medium shade of primary for muted text */
-    --accent: 21 91% 85%; /* Light accent shade of secondary */
-    --accent-foreground: 212 99% 20%; /* Darker shade of primary */
-    --destructive: 0 90% 50%; /* Strong red for destructive actions */
-    --destructive-foreground: 0 0% 98%; /* Light text on destructive background */
+    --muted: 212 99% 85%;
+    /* Light shade of primary for muted backgrounds */
+    --muted-foreground: 212 99% 50%;
+    /* Medium shade of primary for muted text */
+    --accent: 212 99% 70%;
+    /* Accent shade of primary, slightly desaturated */
+    --accent-foreground: 212 99% 20%;
+    /* Darker shade of primary for accent text */
+    --destructive: 0 90% 50%;
+    /* Strong red for destructive actions */
+    --destructive-foreground: 0 0% 98%;
+    /* Light text on destructive background */
+
 
     /* Border, input, and ring colors */
-    --border: 21 91% 85%; /* Light secondary for borders */
-    --input: 212 99% 90%; /* Light shade of primary for input background */
-    --ring: 21 91% 55%; /* Secondary color for rings */
+    --border: 21 91% 85%;
+    /* Light secondary for borders */
+    --input: 212 99% 90%;
+    /* Light shade of primary for input background */
+    --ring: 21 91% 55%;
+    /* Secondary color for rings */
 
     /* Chart colors adjusted for theme */
-    --chart-1: 212 99% 24%; /* Primary */
-    --chart-2: 21 91% 55%; /* Secondary */
-    --chart-3: 212 99% 40%; /* Medium primary */
-    --chart-4: 21 91% 70%; /* Light secondary */
-    --chart-5: 212 99% 60%; /* Light primary */
+    --chart-1: 212 99% 24%;
+    /* Primary */
+    --chart-2: 21 91% 55%;
+    /* Secondary */
+    --chart-3: 212 99% 40%;
+    /* Medium primary */
+    --chart-4: 21 91% 70%;
+    /* Light secondary */
+    --chart-5: 212 99% 60%;
+    /* Light primary */
 
     --radius: 0.5rem;
   }
 
   .dark {
     /* Inverse tones for dark theme */
-    --background: 212 99% 10%; /* Darker primary for background */
-    --foreground: 21 91% 98%; /* Light text */
-    --card: 212 99% 15%; /* Darker primary for card */
-    --card-foreground: 21 91% 98%; /* Light secondary for text */
+    --background: 212 99% 10%;
+    /* Darker primary for background */
+    --foreground: 21 91% 98%;
+    /* Light text */
+    --card: 212 99% 15%;
+    /* Darker primary for card */
+    --card-foreground: 21 91% 98%;
+    /* Light secondary for text */
     --popover: 212 99% 15%;
     --popover-foreground: 21 91% 98%;
 
     /* Adjusted core colors for dark mode */
-    --primary: 212 99% 40%; /* Lighter primary */
-    --primary-foreground: 21 91% 98%; /* Light secondary for text */
-    --secondary: 21 91% 70%; /* Lighter shade of secondary */
-    --secondary-foreground: 212 99% 98%; /* Light text on secondary */
+    --primary: 212 99% 40%;
+    /* Lighter primary */
+    --primary-foreground: 21 91% 98%;
+    /* Light secondary for text */
+    --secondary: 21 91% 70%;
+    /* Lighter shade of secondary */
+    --secondary-foreground: 212 99% 98%;
+    /* Light text on secondary */
 
     /* Supporting dark-mode colors */
-    --muted: 212 99% 20%; /* Dark muted background */
-    --muted-foreground: 21 91% 80%; /* Light muted text */
-    --accent: 21 91% 40%; /* Medium shade of secondary for accent */
-    --accent-foreground: 212 99% 98%; /* Light text on accent */
-    --destructive: 0 100% 40%; /* Medium red for destructive actions */
+    --muted: 212 99% 20%;
+    /* Dark muted background */
+    --muted-foreground: 21 91% 80%;
+    /* Light muted text */
+    --accent: 21 91% 40%;
+    /* Medium shade of secondary for accent */
+    --accent-foreground: 212 99% 98%;
+    /* Light text on accent */
+    --destructive: 0 100% 40%;
+    /* Medium red for destructive actions */
     --destructive-foreground: 0 0% 98%;
 
     /* Border, input, and ring colors in dark mode */
@@ -77,7 +115,4 @@
     --chart-5: 212 99% 80%;
   }
 
-  * {
-    @apply border-border;
-  }
 }

@@ -9,14 +9,14 @@ import { db } from "~/server/db";
 type RequestProps = {
     email: string
     password: string
-    accountType: 'NORMAL' | 'ADVANCE'
+    role: 'ADMIN' | 'SUPERADMIN'
 }
 export async function POST(request: NextRequest) {
     try {
 
-        const { email, password, accountType } = await request.json() as RequestProps;
+        const { email, password, role } = await request.json() as RequestProps;
 
-        if (!password || !email || !accountType) {
+        if (!password || !email || !role) {
             return NextResponse.json(
                 { error: "Fields are required" },
                 { status: 400 }
@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
             data: {
                 email: email,
                 password: encryptedPassword,
-                accountType: accountType
+                role: role
             }
         })
 

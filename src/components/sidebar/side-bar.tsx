@@ -1,7 +1,7 @@
 "use client"
 
 import Image from "next/image"
-import { Bed, Building, Calendar, Currency, Euro, Home, ListOrdered, Map, Plus, Settings, Ticket, } from "lucide-react"
+import { Bed, Briefcase, Currency, Euro, Grid, Home, Map, Plus, Settings, Ticket, } from "lucide-react"
 import { NavMain } from "~/components/sidebar/nav-main"
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail, } from "~/components/ui/sidebar"
 
@@ -13,27 +13,22 @@ const data = {
       icon: Home,
     },
     {
-      title: "Bookings",
+      title: "Listing",
       url: "#",
-      icon: ListOrdered,
+      icon: Grid,
       items: [
-        { title: "Genesis", url: "#" },
-        { title: "Explorer", url: "#" },
-        { title: "Quantum", url: "#" },
+        { title: "Artisan", url: "/dashboard/artisan" },
+        { title: "Business", url: "/dashboard/business" },
+        { title: "Institute", url: "/dashboard/institute" },
       ],
     },
     {
-      title: "Calendar",
-      url: "/dashboard",
-      icon: Calendar,
-    },
-    {
-      title: "Hotel",
+      title: "Employee",
       url: "#",
-      icon: Building,
+      icon: Briefcase,
       items: [
-        { title: "All hotels", url: "/dashboard/hotel" },
-        { title: "Create hotel", url: "/dashboard/hotel/create" },
+        { title: "All employees", url: "/dashboard/employee" },
+        { title: "Create employee", url: "/dashboard/employee/create" },
       ],
     },
     {
@@ -87,7 +82,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader className="relative w-full h-16 my-2">
-        <Image className="object-contain" src="/logo_1.png" alt="logo" fill />
+        <Image className="object-contain" src="/logo.png" alt="logo" fill />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.items} />

@@ -38,10 +38,10 @@ export default function HomePage() {
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/50 to-transparent">
             <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center text-white">
               <h2 className="mb-4 text-4xl font-bold">Nice to see you again</h2>
-              <p className="mb-6 text-xl">Welcome to KolibriStay</p>
+              <p className="mb-6 text-xl">Welcome to Craftlore</p>
               <ul className="space-y-2 text-lg">
                 <li>
-                  Your all-in-one tool to manage your guesthouse hasslefree.
+                  Your all-in-one tool to manage your crafts.
                 </li>
               </ul>
               <div className="my-8 flex flex-col gap-2">
@@ -49,15 +49,15 @@ export default function HomePage() {
                   If you have any problems logging in to your account please
                   contact:
                 </p>
-                <Link className="text-sm" href="mailto:office@kolibri-bs.com">
-                  office@kolibri-bs.com
+                <Link className="text-sm" href="mailto:office@craftlore.com">
+                  office@craftlore.com
                 </Link>
                 <Link
                   className="text-sm"
-                  href="https://wa.me/004369910969670"
+                  href="https://wa.me/0032432432432"
                   target="_blank"
                 >
-                  004369910969670 (WhatsApp)
+                  0032432432432 (WhatsApp)
                 </Link>
               </div>
             </div>
