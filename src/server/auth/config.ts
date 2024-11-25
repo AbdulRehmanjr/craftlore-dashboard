@@ -9,11 +9,11 @@ declare module "next-auth" {
     user: {
       id: string;
       email: string;
-      accountType: string
+      role: string
     };
   }
   interface User {
-    accountType: string; // Add accountType to User as well
+    role: string; // Add accountType to User as well
   }
 }
 
@@ -58,7 +58,7 @@ export const authConfig: NextAuthConfig = {
         return {
           id: userInfo.accountId,
           email: userInfo.email,
-          accountType: userInfo.accountType
+          role: userInfo.role
         };
       },
     }),
@@ -70,7 +70,7 @@ export const authConfig: NextAuthConfig = {
         token.id = user.id;
         token.email = user.email;
         token.name = user.name;
-        token.accountType = user.accountType
+        token.accountType = user.role
       }
       return token;
     },
@@ -80,7 +80,7 @@ export const authConfig: NextAuthConfig = {
         session.user = {
           id: token.id as string,
           email: token.email!,
-          accountType: token.accountType as string,
+          role: token.role as string,
           emailVerified: new Date()
         };
       }
