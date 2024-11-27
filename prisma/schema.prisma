@@ -244,32 +244,80 @@ model SponsorMembership {
 }
 
 model LisitingCritera {
-    criteraId                 String      @id @default(cuid())
-    sourceOfMaterial          String      @default("none")
-    craftingProcess           String      @default("none")
-    sustainablePractices      Boolean     @default(false)
-    sustainabledescription    String      @default("none")
-    fairWage                  Boolean     @default(false)
-    genderSuport              Boolean     @default(false)
-    womenPercentage           Int         @default(0)
-    workplaceuphold           Boolean     @default(false)
-    workplaceDescription      String      @default("none")
-    childLabour               Boolean     @default(false)
-    fairTrade                 Boolean     @default(false)
-    fairtradeDoc              String[]    @default([])
-    giHold                    Boolean     @default(false)
-    giNumber                  String      @default("none")
-    giDoc                     String      @default("none")
-    blockChain                Boolean     @default(false)
-    blockChainDoc             String[]    @default([])
-    ethics                    Boolean     @default(false)
-    qualityReview             Boolean     @default(false)
-    profilePermission         Boolean     @default(false)
-    complianceAcknowledgement Boolean     @default(false)
-    rank                      Ranks       @default(None)
+    criteraId                 String       @id @default(cuid())
+    sourceOfMaterial          String       @default("none")
+    craftingProcess           String       @default("none")
+    sustainablePractices      Boolean      @default(false)
+    sustainabledescription    String       @default("none")
+    fairWage                  Boolean      @default(false)
+    genderSuport              Boolean      @default(false)
+    womenPercentage           Int          @default(0)
+    workplaceuphold           Boolean      @default(false)
+    workplaceDescription      String       @default("none")
+    childLabour               Boolean      @default(false)
+    fairTrade                 Boolean      @default(false)
+    fairtradeDoc              String[]     @default([])
+    giHold                    Boolean      @default(false)
+    giNumber                  String       @default("none")
+    giDoc                     String       @default("none")
+    blockChain                Boolean      @default(false)
+    blockChainDoc             String[]     @default([])
+    ethics                    Boolean      @default(false)
+    qualityReview             Boolean      @default(false)
+    profilePermission         Boolean      @default(false)
+    complianceAcknowledgement Boolean      @default(false)
+    listingRank               ListingRanks @default(None)
     Artisan                   Artisan[]
     Business                  Business[]
     Institute                 Institute[]
+}
+
+// * carbon estimation 
+model Category {
+    categoryId    String        @id @default(cuid())
+    name          String        @unique
+    subcategories SubCategory[]
+}
+
+model SubCategory {
+    subcategoryId String    @id @default(cuid())
+    name          String    @default("none")
+    categoryId    String
+    category      Category  @relation(fields: [categoryId], references: [categoryId], onDelete: Cascade, onUpdate: Cascade)
+    sections      Section[]
+}
+
+model Section {
+    sectionId     String      @id @default(cuid())
+    name          String      @default("none")
+    type          SectionType @default(None)
+    subcategoryId String
+    subCategory   SubCategory @relation(fields: [subcategoryId], references: [subcategoryId], onDelete: Cascade, onUpdate: Cascade)
+    values        Value[]
+}
+
+model Value {
+    valueId   String  @id @default(cuid())
+    name      String  @default("none")
+    value     String  @default("0-0")
+    sectionId String
+    section   Section @relation(fields: [sectionId], references: [sectionId], onDelete: Cascade, onUpdate: Cascade)
+}
+
+enum SectionType {
+    None
+    RawMaterial
+    Processing
+    ProductionMethod
+    Packaging
+    Transportation
+    Crafting
+    Installation
+    Finishing
+    Preparation
+    CookingProcess
+    PaintingAndLacquering
+    Embroidery
 }
 
 enum Role {
@@ -277,7 +325,7 @@ enum Role {
     SUPERADMIN
 }
 
-enum Ranks {
+enum ListingRanks {
     None
     Gold
     Silver
