@@ -1,7 +1,7 @@
 "use client"
 
 import Image from "next/image"
-import { Bed, Briefcase, Currency, Euro, Grid, Home, Map, Plus, Settings, Ticket, } from "lucide-react"
+import { Briefcase, Grid, Home, Percent, Settings, } from "lucide-react"
 import { NavMain } from "~/components/sidebar/nav-main"
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail, } from "~/components/ui/sidebar"
 
@@ -32,42 +32,13 @@ const data = {
       ],
     },
     {
-      title: "Room",
+      title: "Estimation",
       url: "#",
-      icon: Bed,
+      icon: Percent,
       items: [
-        { title: "All rooms", url: "/dashboard/room" },
-        { title: "Create room", url: "/dashboard/room/create" },
+        { title: "Carbon", url: "/dashboard/carbon" },
+        { title: "Create employee", url: "/dashboard/employee/create" },
       ],
-    },
-    {
-      title: "Rate plan",
-      url: "#",
-      icon: Currency,
-      items: [
-        { title: "All rates", url: "/dashboard/rate" },
-        { title: "Create rate", url: "/dashboard/rate/create" },
-      ],
-    },
-    {
-      title: "Channel Mapping",
-      url: "#",
-      icon: Map,
-    },
-    {
-      title: "Price",
-      url: "/dashboard/price",
-      icon: Euro,
-    },
-    {
-      title: "Extra",
-      url: "#",
-      icon: Plus,
-    },
-    {
-      title: "Discount",
-      url: "#",
-      icon: Ticket,
     },
     {
       title: "Setting",

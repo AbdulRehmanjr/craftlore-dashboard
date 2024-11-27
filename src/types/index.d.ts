@@ -62,3 +62,43 @@ type InstituteProps = {
     listingCriteria: string;
     userId: string;
 };
+
+type CategoryProps = {
+    categoryId: string
+    name: string
+}
+
+type SubCategoryProps = {
+    subcategoryId: string
+    name: string
+    categoryId: string
+}
+
+type SectionProps = {
+    sectionId: string
+    name: string
+    type: SectionTypeProps
+    subcategoryId: string
+}
+
+type ValueProps = {
+    valueId: string
+    name: string
+    value: string
+    sectionId: string
+}
+
+type SectionTypeProps =
+    "None" |
+    "RawMaterial" |
+    "Processing" |
+    "ProductionMethod" |
+    "Packaging" |
+    "Transportation" |
+    "Crafting" |
+    "Installation" |
+    "Finishing" |
+    "Preparation" |
+    "CookingProcess" |
+    "PaintingAndLacquering" |
+    "Embroidery"

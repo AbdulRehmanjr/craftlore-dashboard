@@ -1,5 +1,5 @@
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
-import { Ranks } from "@prisma/client";
+import { ListingRanks } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 
 export const lisitingRouter = createTRPCRouter({
@@ -45,7 +45,7 @@ export const lisitingRouter = createTRPCRouter({
                     where: {
                         criteria: {
                             AND: [
-                                { rank: Ranks.Gold }
+                                { listingRank: ListingRanks.Gold }
                             ]
                         },
                     },
@@ -64,7 +64,7 @@ export const lisitingRouter = createTRPCRouter({
                     where: {
                         criteria: {
                             AND: [
-                                { rank: Ranks.Silver }
+                                { listingRank: ListingRanks.Silver }
                             ]
                         },
                     },
@@ -84,7 +84,7 @@ export const lisitingRouter = createTRPCRouter({
                     where: {
                         criteria: {
                             AND: [
-                                { rank: Ranks.Bronze }
+                                { listingRank: ListingRanks.Bronze }
                             ]
                         },
                     },
@@ -159,7 +159,7 @@ export const lisitingRouter = createTRPCRouter({
                     where: {
                         criteria: {
                             AND: [
-                                { rank: Ranks.Gold }
+                                { listingRank: ListingRanks.Gold }
                             ]
                         },
                     },
@@ -179,7 +179,7 @@ export const lisitingRouter = createTRPCRouter({
                     where: {
                         criteria: {
                             AND: [
-                                { rank: Ranks.Silver }
+                                { listingRank: ListingRanks.Silver }
                             ]
                         },
                     },
@@ -199,7 +199,7 @@ export const lisitingRouter = createTRPCRouter({
                     where: {
                         criteria: {
                             AND: [
-                                { rank: Ranks.Bronze }
+                                { listingRank: ListingRanks.Bronze }
                             ]
                         },
                     },
@@ -273,7 +273,7 @@ export const lisitingRouter = createTRPCRouter({
                     where: {
                         criteria: {
                             AND: [
-                                { rank: Ranks.Gold }
+                                { listingRank: ListingRanks.Gold }
                             ]
                         },
                     },
@@ -293,7 +293,7 @@ export const lisitingRouter = createTRPCRouter({
                     where: {
                         criteria: {
                             AND: [
-                                { rank: Ranks.Silver }
+                                { listingRank: ListingRanks.Silver }
                             ]
 
                         },
@@ -314,7 +314,7 @@ export const lisitingRouter = createTRPCRouter({
                     where: {
                         criteria: {
                             AND: [
-                                { rank: Ranks.Bronze }
+                                { listingRank: ListingRanks.Bronze }
                             ]
                         },
                     },

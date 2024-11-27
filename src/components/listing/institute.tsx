@@ -96,7 +96,7 @@ export const InstituteTable = () => {
                             (table.getColumn("instituteAddress")?.getFilterValue() as string) ?? ""
                         }
                         onChange={(event) =>
-                            table.getColumn("instituteAddress")?.setFilterValue(event.target.value)
+                            table.getColumn("insttuteAddress")?.setFilterValue(event.target.value)
                         }
                         className="pl-10"
                     />
@@ -106,10 +106,10 @@ export const InstituteTable = () => {
                     <Input
                         placeholder="Search email"
                         value={
-                            (table.getColumn("insituteEmail")?.getFilterValue() as string) ?? ""
+                            (table.getColumn("instituteEmail")?.getFilterValue() as string) ?? ""
                         }
                         onChange={(event) =>
-                            table.getColumn("insituteEmail")?.setFilterValue(event.target.value)
+                            table.getColumn("instituteEmail")?.setFilterValue(event.target.value)
                         }
                         className="pl-10"
                     />
