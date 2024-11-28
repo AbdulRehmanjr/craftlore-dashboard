@@ -9,6 +9,7 @@ import {
   BreadcrumbSeparator,
   BreadcrumbPage,
 } from "~/components/ui/breadcrumb";
+import { api, HydrateClient } from "~/trpc/server";
 
 type SearchProps = {
   searchParams: Promise<{ categoryId: string }>;
@@ -19,8 +20,9 @@ export default async function CarbonCategoryPage({
 }: SearchProps) {
   const params = await searchParams;
 
+  void api.carbon.getSubByCatId.prefetch({categoryId:params.categoryId});
   return (
-    <>
+    <HydrateClient>
       <div className="my-2 flex flex-col justify-center gap-4">
         <Breadcrumb>
           <BreadcrumbList className="text-primary">
@@ -32,12 +34,12 @@ export default async function CarbonCategoryPage({
             <BreadcrumbSeparator />
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
-                <Link href="/dashboard/carbon">Carbon</Link>
+                <Link href="/dashboard/carbon">Category</Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>Category</BreadcrumbPage>
+              <BreadcrumbPage>Sub category</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
@@ -48,6 +50,6 @@ export default async function CarbonCategoryPage({
         </div>
         <CarbonSubCategoryList categoryId={params.categoryId} />
       </section>
-    </>
+    </HydrateClient>
   );
 }

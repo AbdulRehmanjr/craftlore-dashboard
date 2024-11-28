@@ -36,7 +36,7 @@ const data = {
       url: "#",
       icon: Percent,
       items: [
-        { title: "Carbon", url: "/dashboard/carbon" },
+        { title: "Carbon footprinting", url: "/dashboard/carbon" },
         { title: "Create employee", url: "/dashboard/employee/create" },
       ],
     },

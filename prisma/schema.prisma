@@ -275,33 +275,43 @@ model LisitingCritera {
 // * carbon estimation 
 model Category {
     categoryId    String        @id @default(cuid())
-    name          String        @unique
+    categoryName  String        @unique
     subcategories SubCategory[]
 }
 
 model SubCategory {
-    subcategoryId String    @id @default(cuid())
-    name          String    @default("none")
-    categoryId    String
-    category      Category  @relation(fields: [categoryId], references: [categoryId], onDelete: Cascade, onUpdate: Cascade)
-    sections      Section[]
+    subcategoryId   String     @id @default(cuid())
+    subcategoryName String     @default("none")
+    categoryId      String
+    category        Category   @relation(fields: [categoryId], references: [categoryId], onDelete: Cascade, onUpdate: Cascade)
+    sections        Section[]
+    Material        Material[]
+}
+
+model Material {
+    materialId    String      @id @default(cuid())
+    materialName  String      @default("none")
+    subcategoryId String
+    subcategory   SubCategory @relation(fields: [subcategoryId], references: [subcategoryId], onDelete: Cascade, onUpdate: Cascade)
+    Value         Value[]
 }
 
 model Section {
     sectionId     String      @id @default(cuid())
-    name          String      @default("none")
-    type          SectionType @default(None)
+    sectionType   SectionType @default(None)
     subcategoryId String
     subCategory   SubCategory @relation(fields: [subcategoryId], references: [subcategoryId], onDelete: Cascade, onUpdate: Cascade)
     values        Value[]
 }
 
 model Value {
-    valueId   String  @id @default(cuid())
-    name      String  @default("none")
-    value     String  @default("0-0")
-    sectionId String
-    section   Section @relation(fields: [sectionId], references: [sectionId], onDelete: Cascade, onUpdate: Cascade)
+    valueId    String   @id @default(cuid())
+    name       String   @default("none")
+    value      String   @default("0-0")
+    sectionId  String
+    materialId String
+    section    Section  @relation(fields: [sectionId], references: [sectionId], onDelete: Cascade, onUpdate: Cascade)
+    material   Material @relation(fields: [materialId], references: [materialId], onDelete: Cascade, onUpdate: Cascade)
 }
 
 enum SectionType {
