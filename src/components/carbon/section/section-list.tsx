@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { api } from "~/trpc/react";
 import {
   Card,
@@ -13,29 +13,61 @@ import { Input } from "~/components/ui/input";
 import { Trash, PlusCircle, Save } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
 import { useToast } from "~/hooks/use-toast";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "~/components/ui/select";
 
 // Define the type for your section and value
 type SectionValue = {
   valueId: string;
   sectionId: string;
-  name: string;
+  materialId: string; // Changed from 'name' to 'materialId' if referencing Material by ID
   lowerLimit: string;
   upperLimit: string;
+  name: string;
   new: boolean;
 };
-
 type Section = {
   sectionId: string;
   subcategoryId: string;
-  name: string;
+  sectionType: SectionTypeProps;
   values: SectionValue[];
 };
 
 export const CarbonSectionList = ({ subId }: { subId: string }) => {
   const { toast } = useToast();
+  const [materials] = api.carbon.getAllMaterials.useSuspenseQuery({
+    subId: subId,
+  });
   const [sections] = api.carbon.getSectionsBySubCategory.useSuspenseQuery({
     subCategoryId: subId,
   });
+
+  const [editableSections, setEditableSections] = useState<Section[]>([]);
+
+  useEffect(() => {
+    if (sections) {
+      setEditableSections(
+        sections.map((section) => ({
+          ...section,
+          values:
+            section.values.length > 0
+              ? section.values.map((value) => ({
+                  ...value,
+                  lowerLimit: value.value.split("-")[0] ?? "",
+                  upperLimit: value.value.split("-")[1] ?? "",
+                  new: false,
+                  name: value.name ?? "", // Initialize name if it exists
+                }))
+              : [],
+        })),
+      );
+    }
+  }, [sections]);
 
   const createValueProps = api.carbon.createValueProp.useMutation({
     onSuccess: async () => {
@@ -69,29 +101,15 @@ export const CarbonSectionList = ({ subId }: { subId: string }) => {
     },
   });
 
-  const [editableSections, setEditableSections] = useState<Section[]>(
-    sections.map((section) => ({
-      ...section,
-      values:
-        section.values.length > 0
-          ? section.values.map((value) => ({
-              ...value,
-              lowerLimit: value.value.split("-")[0] ?? "",
-              upperLimit: value.value.split("-")[1] ?? "",
-              new: false,
-            }))
-          : [],
-    })),
-  );
-
   function createNewValue(sectionId: string): SectionValue {
     return {
       valueId: uuidv4(),
       sectionId: sectionId,
-      name: "",
+      materialId: "",
       lowerLimit: "0",
       upperLimit: "0",
       new: true,
+      name: "",
     };
   }
 
@@ -124,7 +142,7 @@ export const CarbonSectionList = ({ subId }: { subId: string }) => {
   const updateValue = (
     sectionIndex: number,
     valueIndex: number,
-    field: "name" | "lowerLimit" | "upperLimit",
+    field: "name"| "materialId" | "lowerLimit" | "upperLimit",
     newValue: string,
   ) => {
     setEditableSections((prevSections) => {
@@ -155,12 +173,12 @@ export const CarbonSectionList = ({ subId }: { subId: string }) => {
 
   const handleSave = (sectionIndex: number, valueIndex: number) => {
     const value = editableSections[sectionIndex]!.values[valueIndex];
-
     if (value?.new) {
-      if (value?.name && value.lowerLimit && value.upperLimit) {
+      if (value?.materialId && value.lowerLimit && value.upperLimit && value.name) {
         const valueToSave = {
           sectionId: value.sectionId,
-          name: value.name,
+          materialId: value.materialId,
+          valueName:value.name,
           value: `${value.lowerLimit}-${value.upperLimit}`,
         };
 
@@ -175,10 +193,10 @@ export const CarbonSectionList = ({ subId }: { subId: string }) => {
         });
       }
     } else {
-      if (value?.name && value.lowerLimit && value.upperLimit) {
+      if (value?.materialId && value.lowerLimit && value.upperLimit) {
         const valueToSave = {
           valueId: value.valueId,
-          name: value.name,
+          valueName:value.name,
           value: `${value.lowerLimit}-${value.upperLimit}`,
         };
 
@@ -192,7 +210,7 @@ export const CarbonSectionList = ({ subId }: { subId: string }) => {
       {editableSections.map((section, sectionIndex) => (
         <Card key={section.sectionId} className="col-span-2">
           <CardHeader className="grid gap-2">
-            <CardTitle>{section.name}</CardTitle>
+            <CardTitle>{section.sectionType}</CardTitle>
             <Button
               variant="outline"
               onClick={() => addValue(sectionIndex)}
@@ -216,8 +234,34 @@ export const CarbonSectionList = ({ subId }: { subId: string }) => {
                         e.target.value,
                       )
                     }
-                    className="flex-grow"
+                    className="mr-1"
                   />
+                  <Select
+                    value={value.materialId}
+                    onValueChange={(selectedValue) =>
+                      updateValue(
+                        sectionIndex,
+                        valueIndex,
+                        "materialId",
+                        selectedValue,
+                      )
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select the material" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {materials.map((material) => (
+                        <SelectItem
+                          value={material.materialId}
+                          key={material.materialId}
+                        >
+                          {material.materialName}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
                   <div className="flex items-center">
                     <Input
                       placeholder="Lower"
@@ -249,20 +293,18 @@ export const CarbonSectionList = ({ subId }: { subId: string }) => {
                     <span className="ml-2">kgCo2</span>
                   </div>
                   <Button
-                    size="icon"
                     onClick={() => handleSave(sectionIndex, valueIndex)}
                     disabled={createValueProps.isPending}
                     className="ml-2"
                   >
-                    <Save className="h-4 w-4" />
+                    <Save className="h-4 w-4" /> Save
                   </Button>
                   <Button
                     variant="destructive"
-                    size="icon"
                     onClick={() => deleteValue(sectionIndex, valueIndex)}
                     className="ml-2"
                   >
-                    <Trash className="h-4 w-4" />
+                    <Trash className="h-4 w-4" /> Delete
                   </Button>
                 </div>
               </div>

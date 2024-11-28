@@ -65,27 +65,32 @@ type InstituteProps = {
 
 type CategoryProps = {
     categoryId: string
-    name: string
+    categoryName: string
 }
 
 type SubCategoryProps = {
     subcategoryId: string
-    name: string
+    subcategoryName: string
     categoryId: string
 }
 
 type SectionProps = {
     sectionId: string
-    name: string
-    type: SectionTypeProps
+    sectionType: SectionTypeProps
     subcategoryId: string
 }
 
+type MaterialProps = {
+    materialId :string
+    materialName:string
+    subcategoryId:string
+}
 type ValueProps = {
     valueId: string
-    name: string
     value: string
+    valueName:string
     sectionId: string
+    materialId:string
 }
 
 type SectionTypeProps =

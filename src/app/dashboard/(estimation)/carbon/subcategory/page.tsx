@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { CarbonMaterialForm } from "~/components/carbon/material/add-material";
+import { CarbonMaterialList } from "~/components/carbon/material/material-list";
 import { SectionForm } from "~/components/carbon/section/section-form";
 import {
   Breadcrumb,
@@ -8,6 +10,7 @@ import {
   BreadcrumbSeparator,
   BreadcrumbPage,
 } from "~/components/ui/breadcrumb";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
 
 type SearchProps = {
   searchParams: Promise<{ subId: string }>;
@@ -30,7 +33,7 @@ export default async function CarbonSubCategoryPage({
             <BreadcrumbSeparator />
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
-                <Link href="/dashboard/carbon">Carbon</Link>
+                <Link href="/dashboard/carbon">Carbon foorprint</Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
@@ -40,7 +43,17 @@ export default async function CarbonSubCategoryPage({
           </BreadcrumbList>
         </Breadcrumb>
       </div>
-      <section className="grid rounded-lg border border-dashed p-5 shadow-sm md:p-10">
+      <section className="grid gap-4 rounded-lg border border-dashed p-5 shadow-sm md:p-10">
+        <Card>
+          <CardHeader>
+            <CardTitle>Materials</CardTitle>
+            <CardDescription>Material for category</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <CarbonMaterialForm subId={params.subId}/>
+            <CarbonMaterialList subId={params.subId}/>
+          </CardContent>
+        </Card>
         <SectionForm subId={params.subId}/>
       </section>
     </>

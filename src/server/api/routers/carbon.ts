@@ -56,7 +56,40 @@ export const carbonRouter = createTRPCRouter({
             try {
                 await ctx.db.category.create({
                     data: {
-                        name: input.categoryName
+                        categoryName: input.categoryName
+                    }
+                })
+            } catch (error) {
+                if (error instanceof TRPCClientError) {
+                    console.error(error.message)
+                    throw new TRPCError({
+                        code: 'INTERNAL_SERVER_ERROR',
+                        message: 'database connection timeout'
+                    })
+                }
+                else if (error instanceof TRPCError) {
+                    console.error(error.message);
+                    throw new TRPCError({
+                        code: "INTERNAL_SERVER_ERROR",
+                        message: error.message,
+                    });
+                }
+
+                console.error(error);
+                throw new TRPCError({
+                    code: "INTERNAL_SERVER_ERROR",
+                    message: "Something went wrong.",
+                });
+            }
+        }),
+
+    deleteCategory: protectedProcedure
+        .input(z.object({ categoryId: z.string() }))
+        .mutation(async ({ ctx, input }) => {
+            try {
+                await ctx.db.category.delete({
+                    where: {
+                        categoryId: input.categoryId
                     }
                 })
             } catch (error) {
@@ -89,7 +122,7 @@ export const carbonRouter = createTRPCRouter({
             try {
                 await ctx.db.subCategory.create({
                     data: {
-                        name: input.subName,
+                        subcategoryName: input.subName,
                         categoryId: input.categoryId
                     }
                 })
@@ -107,6 +140,39 @@ export const carbonRouter = createTRPCRouter({
                         code: 'INTERNAL_SERVER_ERROR',
                         message: 'database connection timeout'
                     })
+                }
+
+                console.error(error);
+                throw new TRPCError({
+                    code: "INTERNAL_SERVER_ERROR",
+                    message: "Something went wrong.",
+                });
+            }
+        }),
+
+    deleteSubCategory: protectedProcedure
+        .input(z.object({ subcategoryId: z.string() }))
+        .mutation(async ({ ctx, input }) => {
+            try {
+                await ctx.db.subCategory.delete({
+                    where: {
+                        subcategoryId: input.subcategoryId
+                    }
+                })
+            } catch (error) {
+                if (error instanceof TRPCClientError) {
+                    console.error(error.message)
+                    throw new TRPCError({
+                        code: 'INTERNAL_SERVER_ERROR',
+                        message: 'database connection timeout'
+                    })
+                }
+                else if (error instanceof TRPCError) {
+                    console.error(error.message);
+                    throw new TRPCError({
+                        code: "INTERNAL_SERVER_ERROR",
+                        message: error.message,
+                    });
                 }
 
                 console.error(error);
@@ -160,7 +226,7 @@ export const carbonRouter = createTRPCRouter({
                 const existingSection = await ctx.db.section.findFirst({
                     where: {
                         subcategoryId: input.subCategoryId,
-                        type: input.sectionType as SectionTypeProps,
+                        sectionType: input.sectionType as SectionTypeProps,
                     },
                 });
 
@@ -173,8 +239,7 @@ export const carbonRouter = createTRPCRouter({
                 await ctx.db.section.create({
                     data: {
                         subcategoryId: input.subCategoryId,
-                        type: input.sectionType as SectionTypeProps,
-                        name: input.sectionType,
+                        sectionType: input.sectionType as SectionTypeProps,
                     },
                 });
             } catch (error) {
@@ -200,19 +265,123 @@ export const carbonRouter = createTRPCRouter({
             }
         }),
 
+    getAllMaterials: protectedProcedure
+        .input(z.object({ subId: z.string() }))
+        .query(async ({ ctx, input }) => {
+            try {
+                const materials: MaterialProps[] = await ctx.db.material.findMany({
+                    where: {
+                        subcategoryId: input.subId
+                    }
+                });
+                return materials
+            } catch (error) {
+                if (error instanceof TRPCError) {
+                    console.error(error.message);
+                    throw new TRPCError({
+                        code: error.code,
+                        message: error.message,
+                    });
+                }
+                else if (error instanceof TRPCClientError) {
+                    console.error(error.message)
+                    throw new TRPCError({
+                        code: 'INTERNAL_SERVER_ERROR',
+                        message: 'database connection timeout'
+                    })
+                }
+                console.error(error);
+                throw new TRPCError({
+                    code: "INTERNAL_SERVER_ERROR",
+                    message: "Something went wrong.",
+                });
+            }
+        }),
+
+    createMaterial: protectedProcedure
+        .input(z.object({
+            materialName: z.string(),
+            subId: z.string()
+        }))
+        .mutation(async ({ input, ctx }) => {
+            try {
+                await ctx.db.material.create({
+                    data: {
+                        materialName: input.materialName,
+                        subcategoryId: input.subId
+                    },
+                });
+            } catch (error) {
+                if (error instanceof TRPCError) {
+                    console.error(error.message);
+                    throw new TRPCError({
+                        code: error.code,
+                        message: error.message,
+                    });
+                }
+                else if (error instanceof TRPCClientError) {
+                    console.error(error.message)
+                    throw new TRPCError({
+                        code: 'INTERNAL_SERVER_ERROR',
+                        message: 'database connection timeout'
+                    })
+                }
+                console.error(error);
+                throw new TRPCError({
+                    code: "INTERNAL_SERVER_ERROR",
+                    message: "Something went wrong.",
+                });
+            }
+        }),
+
+    deleteMaterial: protectedProcedure
+        .input(z.object({ materialId: z.string() }))
+        .mutation(async ({ ctx, input }) => {
+            try {
+                await ctx.db.material.delete({
+                    where: {
+                        materialId: input.materialId
+                    }
+                })
+            } catch (error) {
+                if (error instanceof TRPCClientError) {
+                    console.error(error.message)
+                    throw new TRPCError({
+                        code: 'INTERNAL_SERVER_ERROR',
+                        message: 'database connection timeout'
+                    })
+                }
+                else if (error instanceof TRPCError) {
+                    console.error(error.message);
+                    throw new TRPCError({
+                        code: "INTERNAL_SERVER_ERROR",
+                        message: error.message,
+                    });
+                }
+
+                console.error(error);
+                throw new TRPCError({
+                    code: "INTERNAL_SERVER_ERROR",
+                    message: "Something went wrong.",
+                });
+            }
+        }),
+
     createValueProp: protectedProcedure
         .input(z.object({
             sectionId: z.string(),
-            name: z.string().min(1, 'Name is required'),
+            materialId: z.string(),
+            valueName:z.string(),
             value: z.string().min(1, 'Value is required'),
         }))
         .mutation(async ({ input, ctx }) => {
             try {
                 await ctx.db.value.create({
                     data: {
+                        materialId:input.materialId,
                         sectionId: input.sectionId,
-                        name: input.name,
                         value: input.value,
+                        name:input.valueName,
                     },
                 });
             } catch (error) {
@@ -240,17 +409,17 @@ export const carbonRouter = createTRPCRouter({
 
     updateValueProp: protectedProcedure
         .input(z.object({
-            valueId:z.string(),
-            name: z.string().min(1, 'Name is required'),
-            value: z.string().min(1, 'Value is required'),
+            valueId: z.string(),
+            value: z.string(),
+            valueName:z.string(),
         }))
         .mutation(async ({ input, ctx }) => {
             try {
                 await ctx.db.value.update({
-                    where:{valueId:input.valueId},
+                    where: { valueId: input.valueId },
                     data: {
-                        name: input.name,
                         value: input.value,
+                        name:input.valueName
                     },
                 });
             } catch (error) {
