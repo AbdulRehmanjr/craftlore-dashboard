@@ -2,7 +2,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { LoginForm } from "~/components/forms/login-form";
 
-
 export default function HomePage() {
   return (
     <main className="col-span-12 flex min-h-screen w-full">
@@ -64,6 +63,7 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+      
     </main>
   );
 }

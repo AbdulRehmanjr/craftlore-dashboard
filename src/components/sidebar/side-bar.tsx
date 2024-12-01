@@ -32,12 +32,14 @@ const data = {
       ],
     },
     {
-      title: "Estimation",
+      title: "Tools",
       url: "#",
       icon: Percent,
       items: [
         { title: "Carbon footprinting", url: "/dashboard/carbon" },
-        { title: "Create employee", url: "/dashboard/employee/create" },
+        { title: "Price estimation", url: "/dashboard/employee/create" },
+        { title: "GI authentication", url: "/dashboard/employee/create" },
+        { title: "Blockchain", url: "/dashboard/employee/create" },
       ],
     },
     {
