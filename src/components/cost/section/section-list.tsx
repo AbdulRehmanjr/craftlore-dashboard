@@ -21,29 +21,28 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 
-// Define the type for your section and value
 type SectionValue = {
   valueId: string;
-  carbonsectionId: string;
-  materialId: string; // Changed from 'name' to 'materialId' if referencing Material by ID
-  lowerLimit: string;
-  upperLimit: string;
+  priceSectionId: string;
+  materialId: string;
+  cost: string;
   name: string;
   new: boolean;
 };
+
 type Section = {
-  carbonsectionId: string;
-  subcategoryId: string;
-  sectionType: SectionTypeProps;
-  values: SectionValue[];
+  priceSectionId: string;
+  priceSubCategoryId: string;
+  priceSectionType: PriceSectionTypeProps;
+  PriceValue: SectionValue[];
 };
 
-export const CarbonSectionList = ({ subId }: { subId: string }) => {
+export const PriceSectionList = ({ subId }: { subId: string }) => {
   const { toast } = useToast();
-  const [materials] = api.carbon.getAllMaterials.useSuspenseQuery({
+  const [materials] = api.price.getAllMaterials.useSuspenseQuery({
     subId: subId,
   });
-  const [sections] = api.carbon.getSectionsBySubCategory.useSuspenseQuery({
+  const [sections] = api.price.getSectionsBySubCategory.useSuspenseQuery({
     subCategoryId: subId,
   });
 
@@ -54,14 +53,13 @@ export const CarbonSectionList = ({ subId }: { subId: string }) => {
       setEditableSections(
         sections.map((section) => ({
           ...section,
-          values:
-            section.values.length > 0
-              ? section.values.map((value) => ({
+          PriceValue:
+            section.PriceValue.length > 0
+              ? section.PriceValue.map((value) => ({
                   ...value,
-                  lowerLimit: value.value.split("-")[0] ?? "",
-                  upperLimit: value.value.split("-")[1] ?? "",
+                  cost: value.value,
                   new: false,
-                  name: value.name ?? "", // Initialize name if it exists
+                  name: value.name ?? "", 
                 }))
               : [],
         })),
@@ -69,7 +67,7 @@ export const CarbonSectionList = ({ subId }: { subId: string }) => {
     }
   }, [sections]);
 
-  const createValueProps = api.carbon.createValueProp.useMutation({
+  const createValueProps = api.price.createPriceValueProp.useMutation({
     onSuccess: async () => {
       toast({
         title: "Success!",
@@ -85,7 +83,7 @@ export const CarbonSectionList = ({ subId }: { subId: string }) => {
     },
   });
 
-  const updateValueProps = api.carbon.updateValueProp.useMutation({
+  const updateValueProps = api.price.updatePriceValueProp.useMutation({
     onSuccess: async () => {
       toast({
         title: "Success!",
@@ -104,10 +102,9 @@ export const CarbonSectionList = ({ subId }: { subId: string }) => {
   function createNewValue(sectionId: string): SectionValue {
     return {
       valueId: uuidv4(),
-      carbonsectionId: sectionId,
+      priceSectionId: sectionId,
       materialId: "",
-      lowerLimit: "0",
-      upperLimit: "0",
+      cost: "0",
       new: true,
       name: "",
     };
@@ -123,15 +120,15 @@ export const CarbonSectionList = ({ subId }: { subId: string }) => {
         console.error("Section not found at index", sectionIndex);
         return prevSections;
       }
-      // Ensure values array exists
+      // Ensure PriceValue array exists
       updatedSections[sectionIndex] = {
         ...updatedSections[sectionIndex],
-        values: updatedSections[sectionIndex].values
+        PriceValue: updatedSections[sectionIndex].PriceValue
           ? [
-              ...updatedSections[sectionIndex].values,
-              createNewValue(updatedSections[sectionIndex].carbonsectionId),
+              ...updatedSections[sectionIndex].PriceValue,
+              createNewValue(updatedSections[sectionIndex].priceSectionId),
             ]
-          : [createNewValue(updatedSections[sectionIndex].carbonsectionId)],
+          : [createNewValue(updatedSections[sectionIndex].priceSectionId)],
       };
 
       return updatedSections;
@@ -142,15 +139,15 @@ export const CarbonSectionList = ({ subId }: { subId: string }) => {
   const updateValue = (
     sectionIndex: number,
     valueIndex: number,
-    field: "name"| "materialId" | "lowerLimit" | "upperLimit",
+    field: "name" | "materialId" | "cost",
     newValue: string,
   ) => {
     setEditableSections((prevSections) => {
       const updatedSections = [...prevSections];
 
       // Null check and type guard
-      if (updatedSections[sectionIndex]?.values?.[valueIndex]) {
-        updatedSections[sectionIndex].values[valueIndex][field] = newValue;
+      if (updatedSections[sectionIndex]?.PriceValue?.[valueIndex]) {
+        updatedSections[sectionIndex].PriceValue[valueIndex][field] = newValue;
       }
       return updatedSections;
     });
@@ -163,41 +160,41 @@ export const CarbonSectionList = ({ subId }: { subId: string }) => {
       const currentSection = updatedSections[sectionIndex];
 
       // Null checks
-      if (currentSection?.values) {
+      if (currentSection?.PriceValue) {
         // Remove the value
-        currentSection.values.splice(valueIndex, 1);
+        currentSection.PriceValue.splice(valueIndex, 1);
       }
       return updatedSections;
     });
   };
 
   const handleSave = (sectionIndex: number, valueIndex: number) => {
-    const value = editableSections[sectionIndex]!.values[valueIndex];
+    const value = editableSections[sectionIndex]!.PriceValue[valueIndex];
     if (value?.new) {
-      if (value?.materialId && value.lowerLimit && value.upperLimit && value.name) {
+      if (value?.materialId && value.cost && value.name) {
         const valueToSave = {
-          sectionId: value.carbonsectionId,
+          sectionId: value.priceSectionId,
           materialId: value.materialId,
-          valueName:value.name,
-          value: `${value.lowerLimit}-${value.upperLimit}`,
+          valueName: value.name,
+          value: value.cost,
         };
 
         createValueProps.mutate(valueToSave);
 
         setEditableSections((prevSections) => {
           const updatedSections = [...prevSections];
-          if (updatedSections[sectionIndex]?.values?.[valueIndex]) {
-            updatedSections[sectionIndex].values[valueIndex].new = false;
+          if (updatedSections[sectionIndex]?.PriceValue?.[valueIndex]) {
+            updatedSections[sectionIndex].PriceValue[valueIndex].new = false;
           }
           return updatedSections;
         });
       }
     } else {
-      if (value?.materialId && value.lowerLimit && value.upperLimit) {
+      if (value?.materialId && value.cost) {
         const valueToSave = {
           valueId: value.valueId,
-          valueName:value.name,
-          value: `${value.lowerLimit}-${value.upperLimit}`,
+          valueName: value.name,
+          value: value.cost,
         };
 
         updateValueProps.mutate(valueToSave);
@@ -208,9 +205,9 @@ export const CarbonSectionList = ({ subId }: { subId: string }) => {
   return (
     <>
       {editableSections.map((section, sectionIndex) => (
-        <Card key={section.carbonsectionId} className="col-span-2">
+        <Card key={section.priceSectionId} className="col-span-2">
           <CardHeader className="grid gap-2">
-            <CardTitle>{section.sectionType}</CardTitle>
+            <CardTitle>{section.priceSectionType}</CardTitle>
             <Button
               variant="outline"
               onClick={() => addValue(sectionIndex)}
@@ -220,7 +217,7 @@ export const CarbonSectionList = ({ subId }: { subId: string }) => {
             </Button>
           </CardHeader>
           <CardContent className="space-y-2">
-            {section.values.map((value, valueIndex) => (
+            {section.PriceValue.map((value, valueIndex) => (
               <div key={value.valueId} className="flex items-center gap-2">
                 <div className="flex w-full items-center gap-2">
                   <Input
@@ -264,33 +261,18 @@ export const CarbonSectionList = ({ subId }: { subId: string }) => {
 
                   <div className="flex items-center">
                     <Input
-                      placeholder="Lower"
-                      value={value.lowerLimit}
+                      placeholder="Cost"
+                      value={value.cost ?? '0'}
                       onChange={(e) =>
                         updateValue(
                           sectionIndex,
                           valueIndex,
-                          "lowerLimit",
+                          "cost",
                           e.target.value,
                         )
                       }
                       className="mr-1 w-20"
                     />
-                    <span>-</span>
-                    <Input
-                      placeholder="Upper"
-                      value={value.upperLimit}
-                      onChange={(e) =>
-                        updateValue(
-                          sectionIndex,
-                          valueIndex,
-                          "upperLimit",
-                          e.target.value,
-                        )
-                      }
-                      className="ml-1 w-20"
-                    />
-                    <span className="ml-2">kgCo2</span>
                   </div>
                   <Button
                     onClick={() => handleSave(sectionIndex, valueIndex)}

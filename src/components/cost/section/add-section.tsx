@@ -35,20 +35,20 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
-export const CarbonSectionForm = ({ subId }: { subId: string }) => {
+export const PriceSectionForm = ({ subId }: { subId: string }) => {
   const utils = api.useUtils();
   const { toast } = useToast();
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
   });
-  const createSection = api.carbon.createSection.useMutation({
+  const createSection = api.price.createSection.useMutation({
     onSuccess: async () => {
       toast({
         title: "Success!",
         description: "Section added successfully.",
       });
       form.reset();
-      await utils.carbon.getSectionsBySubCategory.invalidate();
+      await utils.price.getSectionsBySubCategory.invalidate();
     },
     onError: (error) => {
       toast({
@@ -60,7 +60,10 @@ export const CarbonSectionForm = ({ subId }: { subId: string }) => {
   });
 
   const onSubmission = (data: FormData) => {
-    createSection.mutate({ subCategoryId: subId, sectionType: data.sectionName });
+    createSection.mutate({
+      subCategoryId: subId,
+      sectionType: data.sectionName,
+    });
   };
 
   return (
@@ -95,10 +98,30 @@ export const CarbonSectionForm = ({ subId }: { subId: string }) => {
                     </FormControl>
                     <SelectContent>
                       {[
-                        "RawMaterial",
+                        "MaterialType",
                         "Quality",
+                        "ProductionProcess",
+                        "ProductCertifications",
+                        "PlyType",
+                        "TypeOfWeaving",
+                        "DesignPatternTypes",
+                        "DyeTypes",
+                        "FinishingTechniques",
+                        "ProductLineSize",
+                        "ColorShades",
+                        "Embellishments",
+                        "Certifications",
+                        "MaterialGrading",
+                        "ProductTypesSizes",
+                        "KnotPerInch",
+                        "Dimensions",
+                        "CarvingTechniques",
+                        "ScaleOfCarving",
+                        "FinishOptions",
+                        "PatternTypes",
+                        "FabricAndMaterial",
+                        "RawMaterial",
                         "Processing",
-                        "ProductionMethod",
                         "Packaging",
                         "Transportation",
                         "Crafting",

@@ -81,23 +81,62 @@ type SectionProps = {
 }
 
 type MaterialProps = {
-    materialId :string
-    materialName:string
-    subcategoryId:string
+    materialId: string
+    materialName: string
+    subcategoryId: string
 }
 type ValueProps = {
     valueId: string
     value: string
-    valueName:string
+    valueName: string
     sectionId: string
-    materialId:string
+    materialId: string
 }
 
 type SectionTypeProps =
     "None" |
+    "Quality" |
+    "ProductLine" |
     "RawMaterial" |
     "Processing" |
     "ProductionMethod" |
+    "Packaging" |
+    "Transportation" |
+    "Crafting" |
+    "Installation" |
+    "Finishing" |
+    "Preparation" |
+    "CookingProcess" |
+    "PaintingAndLacquering" |
+    "Embroidery"
+
+
+type PriceSectionTypeProps =
+    "None" |
+    "MaterialType" |
+    "Quality" |
+    "ProductionProcess" |
+    "ProductCertifications" |
+    "PlyType" |
+    "TypeOfWeaving" |
+    "DesignPatternTypes" |
+    "DyeTypes" |
+    "FinishingTechniques" |
+    "ProductLineSize" |
+    "ColorShades" |
+    "Embellishments" |
+    "Certifications" |
+    "MaterialGrading" |
+    "ProductTypesSizes" |
+    "KnotPerInch" |
+    "Dimensions" |
+    "CarvingTechniques" |
+    "ScaleOfCarving" |
+    "FinishOptions" |
+    "PatternTypes" |
+    "FabricAndMaterial" |
+    "RawMaterial" |
+    "Processing" |
     "Packaging" |
     "Transportation" |
     "Crafting" |

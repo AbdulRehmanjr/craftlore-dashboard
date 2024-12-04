@@ -8,6 +8,7 @@ import { Button } from "~/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogTitle,
   DialogTrigger,
 } from "~/components/ui/dialog";
@@ -21,34 +22,32 @@ import {
   FormLabel,
   FormMessage,
 } from "~/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "~/components/ui/select";
+import { Input } from "~/components/ui/input";
 
 const formSchema = z.object({
-  sectionName: z.string(),
+  subCategoryName: z.string(),
 });
 
 type FormData = z.infer<typeof formSchema>;
 
-export const CarbonSectionForm = ({ subId }: { subId: string }) => {
+type FormProps  = {
+  categoryId:string
+}
+
+export const PriceSubCategoryForm = ({categoryId}:FormProps) => {
   const utils = api.useUtils();
   const { toast } = useToast();
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
   });
-  const createSection = api.carbon.createSection.useMutation({
+  const createCategory = api.price.createSubCategory.useMutation({
     onSuccess: async () => {
       toast({
         title: "Success!",
-        description: "Section added successfully.",
+        description: "Sub Category added successfully.",
       });
       form.reset();
-      await utils.carbon.getSectionsBySubCategory.invalidate();
+      await utils.price.getSubByCatId.invalidate({categoryId:categoryId});
     },
     onError: (error) => {
       toast({
@@ -60,7 +59,7 @@ export const CarbonSectionForm = ({ subId }: { subId: string }) => {
   });
 
   const onSubmission = (data: FormData) => {
-    createSection.mutate({ subCategoryId: subId, sectionType: data.sectionName });
+    createCategory.mutate({ categoryId:categoryId,subName: data.subCategoryName });
   };
 
   return (
@@ -68,11 +67,12 @@ export const CarbonSectionForm = ({ subId }: { subId: string }) => {
       <DialogTrigger asChild>
         <Button className="flex items-center space-x-2">
           <PlusIcon className="h-5 w-5" />
-          <span>Add Section</span>
+          <span>Add Subcategory</span>
         </Button>
       </DialogTrigger>
       <DialogContent>
-        <DialogTitle>Add New Section</DialogTitle>
+        <DialogTitle>Add new sub category</DialogTitle>
+        <DialogDescription>You can add sub categories thtough this form</DialogDescription>
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmission)}
@@ -80,41 +80,17 @@ export const CarbonSectionForm = ({ subId }: { subId: string }) => {
           >
             <FormField
               control={form.control}
-              name="sectionName"
+              name="subCategoryName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Section name</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a type" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {[
-                        "RawMaterial",
-                        "Quality",
-                        "Processing",
-                        "ProductionMethod",
-                        "Packaging",
-                        "Transportation",
-                        "Crafting",
-                        "Installation",
-                        "Finishing",
-                        "Preparation",
-                        "CookingProcess",
-                        "PaintingAndLacquering",
-                        "Embroidery",
-                      ].map((section, index) => (
-                        <SelectItem value={section} key={index}>
-                          {section}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormLabel>Subcategory name</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter the sub category"
+                      {...field}
+                      value={field.value ?? ""}
+                    />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -122,15 +98,15 @@ export const CarbonSectionForm = ({ subId }: { subId: string }) => {
             <Button
               type="submit"
               className="w-full max-w-md"
-              disabled={createSection.isPending}
+              disabled={createCategory.isPending}
             >
-              {createSection.isPending ? (
+              {createCategory.isPending ? (
                 <>
                   <RefreshCcw className="mr-2 h-4 w-4 animate-spin" />
                   Please wait...
                 </>
               ) : (
-                "Create section"
+                "Create category"
               )}
             </Button>
           </form>

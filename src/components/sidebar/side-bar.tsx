@@ -1,9 +1,15 @@
-"use client"
+"use client";
 
-import Image from "next/image"
-import { Briefcase, Grid, Home, Percent, Settings, } from "lucide-react"
-import { NavMain } from "~/components/sidebar/nav-main"
-import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail, } from "~/components/ui/sidebar"
+import Image from "next/image";
+import { Briefcase, Grid, Home, Settings, Wrench } from "lucide-react";
+import { NavMain } from "~/components/sidebar/nav-main";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarRail,
+} from "~/components/ui/sidebar";
 
 const data = {
   items: [
@@ -13,13 +19,26 @@ const data = {
       icon: Home,
     },
     {
-      title: "Listing",
+      title: "B2B",
       url: "#",
       icon: Grid,
       items: [
+        { title: "Listing", url: "/dashboard/artisan" },
+        { title: "Ranking", url: "/dashboard/business" },
+        { title: "Blacklist", url: "/dashboard/institute" },
         { title: "Artisan", url: "/dashboard/artisan" },
         { title: "Business", url: "/dashboard/business" },
         { title: "Institute", url: "/dashboard/institute" },
+      ],
+    },
+    {
+      title: "Membership",
+      url: "#",
+      icon: Briefcase,
+      items: [
+        { title: "Buyer", url: "/dashboard/employee" },
+        { title: "Corporate", url: "/dashboard/employee/create" },
+        { title: "Sponsor", url: "/dashboard/employee" },
       ],
     },
     {
@@ -34,12 +53,13 @@ const data = {
     {
       title: "Tools",
       url: "#",
-      icon: Percent,
+      icon: Wrench,
       items: [
         { title: "Carbon footprinting", url: "/dashboard/carbon" },
-        { title: "Price estimation", url: "/dashboard/employee/create" },
+        { title: "Price estimation", url: "/dashboard/price" },
         { title: "GI authentication", url: "/dashboard/employee/create" },
         { title: "Blockchain", url: "/dashboard/employee/create" },
+        { title: "Craft profiling", url: "/dashboard/employee/create" },
       ],
     },
     {
@@ -50,20 +70,17 @@ const data = {
   ],
 };
 
-
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader className="relative w-full h-16 my-2">
+      <SidebarHeader className="relative my-2 h-16 w-full">
         <Image className="object-contain" src="/logo.png" alt="logo" fill />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.items} />
       </SidebarContent>
-      <SidebarFooter>
-        {/* <NavUser user={data.user} /> */}
-      </SidebarFooter>
+      <SidebarFooter>{/* <NavUser user={data.user} /> */}</SidebarFooter>
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }

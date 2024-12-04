@@ -3,12 +3,12 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 
-export const carbonRouter = createTRPCRouter({
+export const priceRouter = createTRPCRouter({
 
     getCategories: protectedProcedure
         .query(async ({ ctx }) => {
             try {
-                const data: CategoryProps[] = await ctx.db.category.findMany()
+                const data: CategoryProps[] = await ctx.db.priceCategory.findMany()
                 return data
             } catch (error) {
                 if (error instanceof TRPCClientError) {
@@ -30,8 +30,8 @@ export const carbonRouter = createTRPCRouter({
         .input(z.object({ categoryId: z.string() }))
         .query(async ({ ctx, input }) => {
             try {
-                const data: SubCategoryProps[] = await ctx.db.subCategory.findMany({
-                    where: { categoryId: input.categoryId }
+                const data = await ctx.db.priceSubCategory.findMany({
+                    where: { pricecategoryId: input.categoryId }
                 })
                 return data
             } catch (error) {
@@ -154,7 +154,7 @@ export const carbonRouter = createTRPCRouter({
         .input(z.object({ subcategoryId: z.string() }))
         .mutation(async ({ ctx, input }) => {
             try {
-                await ctx.db.subCategory.delete({
+                await ctx.db.priceSubCategory.delete({
                     where: {
                         subcategoryId: input.subcategoryId
                     }
@@ -187,9 +187,9 @@ export const carbonRouter = createTRPCRouter({
         .input(z.object({ subCategoryId: z.string() }))
         .query(async ({ input, ctx }) => {
             try {
-                const sections = await ctx.db.carbonSection.findMany({
-                    where: { subcategoryId: input.subCategoryId },
-                    include: { values: true },
+                const sections = await ctx.db.priceSection.findMany({
+                    where: { priceSubCategoryId: input.subCategoryId },
+                    include: { PriceValue: true },
                 });
                 return sections
             } catch (error) {
@@ -223,10 +223,10 @@ export const carbonRouter = createTRPCRouter({
         }))
         .mutation(async ({ input, ctx }) => {
             try {
-                const existingSection = await ctx.db.carbonSection.findFirst({
+                const existingSection = await ctx.db.priceSection.findFirst({
                     where: {
-                        subcategoryId: input.subCategoryId,
-                        sectionType: input.sectionType as SectionTypeProps,
+                        priceSubCategoryId: input.subCategoryId,
+                        priceSectionType: input.sectionType as PriceSectionTypeProps,
                     },
                 });
 
@@ -236,10 +236,10 @@ export const carbonRouter = createTRPCRouter({
                         message: `Section type "${input.sectionType}" already exists for this subcategory.`
                     });
 
-                await ctx.db.carbonSection.create({
+                await ctx.db.priceSection.create({
                     data: {
-                        subcategoryId: input.subCategoryId,
-                        sectionType: input.sectionType as SectionTypeProps,
+                        priceSubCategoryId: input.subCategoryId,
+                        priceSectionType: input.sectionType as PriceSectionTypeProps,
                     },
                 });
             } catch (error) {
@@ -269,9 +269,9 @@ export const carbonRouter = createTRPCRouter({
         .input(z.object({ subId: z.string() }))
         .query(async ({ ctx, input }) => {
             try {
-                const materials: MaterialProps[] = await ctx.db.material.findMany({
+                const materials = await ctx.db.priceMaterial.findMany({
                     where: {
-                        subcategoryId: input.subId
+                        pricesubcategoryId: input.subId
                     }
                 });
                 return materials
@@ -305,10 +305,10 @@ export const carbonRouter = createTRPCRouter({
         }))
         .mutation(async ({ input, ctx }) => {
             try {
-                await ctx.db.material.create({
+                await ctx.db.priceMaterial.create({
                     data: {
                         materialName: input.materialName,
-                        subcategoryId: input.subId
+                        pricesubcategoryId: input.subId
                     },
                 });
             } catch (error) {
@@ -338,7 +338,7 @@ export const carbonRouter = createTRPCRouter({
         .input(z.object({ materialId: z.string() }))
         .mutation(async ({ ctx, input }) => {
             try {
-                await ctx.db.material.delete({
+                await ctx.db.priceMaterial.delete({
                     where: {
                         materialId: input.materialId
                     }
@@ -367,7 +367,7 @@ export const carbonRouter = createTRPCRouter({
             }
         }),
 
-    createValueProp: protectedProcedure
+    createPriceValueProp: protectedProcedure
         .input(z.object({
             sectionId: z.string(),
             materialId: z.string(),
@@ -376,10 +376,10 @@ export const carbonRouter = createTRPCRouter({
         }))
         .mutation(async ({ input, ctx }) => {
             try {
-                await ctx.db.carbonValue.create({
+                await ctx.db.priceValue.create({
                     data: {
                         materialId:input.materialId,
-                        carbonsectionId: input.sectionId,
+                        priceSectionId: input.sectionId,
                         value: input.value,
                         name:input.valueName,
                     },
@@ -407,7 +407,7 @@ export const carbonRouter = createTRPCRouter({
             }
         }),
 
-    updateValueProp: protectedProcedure
+    updatePriceValueProp: protectedProcedure
         .input(z.object({
             valueId: z.string(),
             value: z.string(),
@@ -415,7 +415,7 @@ export const carbonRouter = createTRPCRouter({
         }))
         .mutation(async ({ input, ctx }) => {
             try {
-                await ctx.db.carbonValue.update({
+                await ctx.db.priceValue.update({
                     where: { valueId: input.valueId },
                     data: {
                         value: input.value,
