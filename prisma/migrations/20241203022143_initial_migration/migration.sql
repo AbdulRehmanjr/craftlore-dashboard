@@ -1,8 +1,11 @@
 -- CreateEnum
+CREATE TYPE "SectionType" AS ENUM ('None', 'Quality', 'ProductLine', 'RawMaterial', 'Processing', 'ProductionMethod', 'Packaging', 'Transportation', 'Crafting', 'Installation', 'Finishing', 'Preparation', 'CookingProcess', 'PaintingAndLacquering', 'Embroidery');
+
+-- CreateEnum
 CREATE TYPE "Role" AS ENUM ('ADMIN', 'SUPERADMIN');
 
 -- CreateEnum
-CREATE TYPE "Ranks" AS ENUM ('None', 'Gold', 'Silver', 'Bronze');
+CREATE TYPE "ListingRanks" AS ENUM ('None', 'Gold', 'Silver', 'Bronze');
 
 -- CreateEnum
 CREATE TYPE "InstitutionType" AS ENUM ('None', 'Governance', 'NGO', 'Training_Body', 'Educational_Body');
@@ -245,9 +248,55 @@ CREATE TABLE "LisitingCritera" (
     "qualityReview" BOOLEAN NOT NULL DEFAULT false,
     "profilePermission" BOOLEAN NOT NULL DEFAULT false,
     "complianceAcknowledgement" BOOLEAN NOT NULL DEFAULT false,
-    "rank" "Ranks" NOT NULL DEFAULT 'None',
+    "listingRank" "ListingRanks" NOT NULL DEFAULT 'None',
 
     CONSTRAINT "LisitingCritera_pkey" PRIMARY KEY ("criteraId")
+);
+
+-- CreateTable
+CREATE TABLE "Category" (
+    "categoryId" TEXT NOT NULL,
+    "categoryName" TEXT NOT NULL,
+
+    CONSTRAINT "Category_pkey" PRIMARY KEY ("categoryId")
+);
+
+-- CreateTable
+CREATE TABLE "SubCategory" (
+    "subcategoryId" TEXT NOT NULL,
+    "subcategoryName" TEXT NOT NULL DEFAULT 'none',
+    "categoryId" TEXT NOT NULL,
+
+    CONSTRAINT "SubCategory_pkey" PRIMARY KEY ("subcategoryId")
+);
+
+-- CreateTable
+CREATE TABLE "Material" (
+    "materialId" TEXT NOT NULL,
+    "materialName" TEXT NOT NULL DEFAULT 'none',
+    "subcategoryId" TEXT NOT NULL,
+
+    CONSTRAINT "Material_pkey" PRIMARY KEY ("materialId")
+);
+
+-- CreateTable
+CREATE TABLE "Section" (
+    "sectionId" TEXT NOT NULL,
+    "sectionType" "SectionType" NOT NULL DEFAULT 'None',
+    "subcategoryId" TEXT NOT NULL,
+
+    CONSTRAINT "Section_pkey" PRIMARY KEY ("sectionId")
+);
+
+-- CreateTable
+CREATE TABLE "CarbonValue" (
+    "valueId" TEXT NOT NULL,
+    "name" TEXT NOT NULL DEFAULT 'none',
+    "value" TEXT NOT NULL DEFAULT '0-0',
+    "sectionId" TEXT NOT NULL,
+    "materialId" TEXT NOT NULL,
+
+    CONSTRAINT "CarbonValue_pkey" PRIMARY KEY ("valueId")
 );
 
 -- CreateIndex
@@ -277,6 +326,9 @@ CREATE UNIQUE INDEX "Institute_instituteEmail_key" ON "Institute"("instituteEmai
 -- CreateIndex
 CREATE UNIQUE INDEX "SponsorMembership_email_key" ON "SponsorMembership"("email");
 
+-- CreateIndex
+CREATE UNIQUE INDEX "Category_categoryName_key" ON "Category"("categoryName");
+
 -- AddForeignKey
 ALTER TABLE "Artisan" ADD CONSTRAINT "Artisan_listingCriteria_fkey" FOREIGN KEY ("listingCriteria") REFERENCES "LisitingCritera"("criteraId") ON DELETE CASCADE ON UPDATE CASCADE;
 
@@ -303,3 +355,18 @@ ALTER TABLE "CorpoMembership" ADD CONSTRAINT "CorpoMembership_userId_fkey" FOREI
 
 -- AddForeignKey
 ALTER TABLE "SponsorMembership" ADD CONSTRAINT "SponsorMembership_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("userId") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "SubCategory" ADD CONSTRAINT "SubCategory_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "Category"("categoryId") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Material" ADD CONSTRAINT "Material_subcategoryId_fkey" FOREIGN KEY ("subcategoryId") REFERENCES "SubCategory"("subcategoryId") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Section" ADD CONSTRAINT "Section_subcategoryId_fkey" FOREIGN KEY ("subcategoryId") REFERENCES "SubCategory"("subcategoryId") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "CarbonValue" ADD CONSTRAINT "CarbonValue_sectionId_fkey" FOREIGN KEY ("sectionId") REFERENCES "Section"("sectionId") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "CarbonValue" ADD CONSTRAINT "CarbonValue_materialId_fkey" FOREIGN KEY ("materialId") REFERENCES "Material"("materialId") ON DELETE CASCADE ON UPDATE CASCADE;

@@ -8,6 +8,82 @@ import { TRPCClientError } from "@trpc/client";
 
 export const seedRouter = createTRPCRouter({
 
+    createPrice: publicProcedure
+        .input(z.object({ categories: z.string().array() }))
+        .mutation(async ({ input, ctx }) => {
+            try {
+                for (const category of input.categories) {
+                    await ctx.db.priceCategory.createMany({
+                        data: {
+                            categoryName: category
+                        }
+                    })
+                }
+            } catch (error) {
+                if (error instanceof TRPCError) {
+                    console.error(error.message);
+                    throw new TRPCError({
+                        code: error.code,
+                        message: error.message,
+                    });
+                }
+                else if (error instanceof TRPCClientError) {
+                    console.error(error.message)
+                    throw new TRPCError({
+                        code: 'INTERNAL_SERVER_ERROR',
+                        message: 'database connection timeout'
+                    })
+                }
+                console.error(error);
+                throw new TRPCError({
+                    code: "INTERNAL_SERVER_ERROR",
+                    message: "Something went wrong.",
+                });
+            }
+        }),
+    createPriceSubCategories: publicProcedure
+        .input(z.object({
+            subcategories: z.object({
+                categoryId: z.string(),
+                subCategoryName: z.string()
+            }).array()
+        }))
+        .mutation(async ({ input, ctx }) => {
+            try {
+
+                for (const sub of input.subcategories) {
+                    await ctx.db.priceSubCategory.create({
+                        data: {
+                            pricecategoryId: sub.categoryId,
+                            subcategoryName: sub.subCategoryName,
+                        }
+                    })
+                }
+
+
+            } catch (error) {
+                if (error instanceof TRPCError) {
+                    console.error(error.message);
+                    throw new TRPCError({
+                        code: error.code,
+                        message: error.message,
+                    });
+                }
+                else if (error instanceof TRPCClientError) {
+                    console.error(error.message)
+                    throw new TRPCError({
+                        code: 'INTERNAL_SERVER_ERROR',
+                        message: 'database connection timeout'
+                    })
+                }
+                console.error(error);
+                throw new TRPCError({
+                    code: "INTERNAL_SERVER_ERROR",
+                    message: "Something went wrong.",
+                });
+            }
+        }),
+
     createCategories: publicProcedure
         .input(z.object({ categories: z.string().array() }))
         .mutation(async ({ input, ctx }) => {
@@ -141,7 +217,7 @@ export const seedRouter = createTRPCRouter({
             try {
 
                 for (const section of input.sections) {
-                    await ctx.db.section.create({
+                    await ctx.db.carbonSection.create({
                         data: {
                             sectionType: section.sectionName as SectionTypeProps,
                             subcategoryId: section.subcategoryId,
@@ -186,10 +262,10 @@ export const seedRouter = createTRPCRouter({
             try {
 
                 for (const value of input.values) {
-                    await ctx.db.value.create({
+                    await ctx.db.carbonValue.create({
                         data: {
                             materialId: value.materialId,
-                            sectionId: value.sectionId,
+                            carbonsectionId: value.sectionId,
                             value: value.value,
                             name: value.valueName,
                         },

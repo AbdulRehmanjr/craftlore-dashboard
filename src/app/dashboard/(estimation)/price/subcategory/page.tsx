@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { CarbonMaterialForm } from "~/components/carbon/material/add-material";
-import { CarbonMaterialList } from "~/components/carbon/material/material-list";
-import { SectionForm } from "~/components/carbon/section/section-form";
+import { PriceMaterialForm } from "~/components/cost/material/add-material";
+import { PriceMaterialList } from "~/components/cost/material/material-list";
+import { CostSectionForm } from "~/components/cost/section/section-form";
 import {
   Breadcrumb,
   BreadcrumbList,
@@ -39,7 +39,7 @@ export default async function CarbonSubCategoryPage({
             <BreadcrumbSeparator />
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
-                <Link href="/dashboard/carbon">Category</Link>
+                <Link href="/dashboard/price">Category</Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
@@ -60,11 +60,11 @@ export default async function CarbonSubCategoryPage({
             <CardDescription>Material for category</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
-            <CarbonMaterialForm subId={params.subId} />
-            <CarbonMaterialList subId={params.subId} />
+            <PriceMaterialForm subId={params.subId} />
+            <PriceMaterialList subId={params.subId} />
           </CardContent>
         </Card>
-        <SectionForm subId={params.subId} />
+        <CostSectionForm subId={params.subId} />
       </section>
     </>
   );
