@@ -17,7 +17,7 @@ type ComponentProps = {
 }
 
 export const CarbonSubCategoryList = ({categoryId}:ComponentProps) => {
-  const [subCategories] =  api.carbon.getSubByCatId.useSuspenseQuery({categoryId:categoryId});
+  const [subCategories] =  api.category.getSubByCatId.useSuspenseQuery({categoryId:categoryId});
   return (
     <>
       {subCategories.map((sub) => (

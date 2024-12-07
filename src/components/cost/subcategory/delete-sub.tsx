@@ -25,13 +25,13 @@ export const PriceSubCategoryDelete = ({
 }) => {
   const utils = api.useUtils();
   const { toast } = useToast();
-  const deleteCategory = api.price.deleteSubCategory.useMutation({
+  const deleteCategory = api.category.deleteSubCategory.useMutation({
     onSuccess: async () => {
       toast({
         title: "Success!",
         description: "Sub Category deleted successfully.",
       });
-      await utils.price.getSubByCatId.invalidate({ categoryId: categoryId });
+      await utils.category.getSubByCatId.invalidate({ categoryId: categoryId });
     },
     onError: (error) => {
       toast({

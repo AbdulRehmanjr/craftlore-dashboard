@@ -16,13 +16,13 @@ export const PriceMaterialDelete = ({
 }) => {
   const utils = api.useUtils();
   const { toast } = useToast();
-  const deleteMaterial = api.price.deleteMaterial.useMutation({
+  const deleteMaterial = api.category.deleteMaterial.useMutation({
     onSuccess: async () => {
       toast({
         title: "Success!",
         description: "Material deleted successfully.",
       });
-         await utils.price.getAllMaterials.invalidate({subId:subId});
+         await utils.category.getAllMaterials.invalidate({subId:subId});
     },
     onError: (error) => {
       toast({

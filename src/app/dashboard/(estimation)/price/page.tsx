@@ -20,7 +20,7 @@ export default  async function PriceEstimationPage() {
 
   const session = await auth()
   if(!session) redirect('/')
-  void api.price.getCategories.prefetch();
+  void api.category.getCategories.prefetch();
   return (
     <HydrateClient>
       <div className="my-2 flex flex-col justify-center gap-4">

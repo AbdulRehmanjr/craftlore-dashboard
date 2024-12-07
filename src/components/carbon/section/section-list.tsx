@@ -33,14 +33,14 @@ type SectionValue = {
 };
 type Section = {
   carbonsectionId: string;
-  subcategoryId: string;
+  subCategoryId: string;
   sectionType: SectionTypeProps;
   values: SectionValue[];
 };
 
 export const CarbonSectionList = ({ subId }: { subId: string }) => {
   const { toast } = useToast();
-  const [materials] = api.carbon.getAllMaterials.useSuspenseQuery({
+  const [materials] = api.category.getAllMaterials.useSuspenseQuery({
     subId: subId,
   });
   const [sections] = api.carbon.getSectionsBySubCategory.useSuspenseQuery({

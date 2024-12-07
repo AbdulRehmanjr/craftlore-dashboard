@@ -39,14 +39,14 @@ export const CarbonMaterialForm = ({subId}:ComponentProps) => {
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
   });
-  const createMaterial = api.carbon.createMaterial.useMutation({
+  const createMaterial = api.category.createMaterial.useMutation({
     onSuccess: async () => {
       toast({
         title: "Success!",
         description: "Material added successfully.",
       });
       form.reset();
-      await utils.carbon.getAllMaterials.invalidate({subId:subId});
+      await utils.category.getAllMaterials.invalidate({subId:subId});
     },
     onError: (error) => {
       toast({

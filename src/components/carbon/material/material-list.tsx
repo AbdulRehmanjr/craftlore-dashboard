@@ -15,7 +15,7 @@ type ComponentProps ={
 
 export const CarbonMaterialList =  ({subId}:ComponentProps) => {
 
-  const [materials] =  api.carbon.getAllMaterials.useSuspenseQuery({subId:subId});
+  const [materials] =  api.category.getAllMaterials.useSuspenseQuery({subId:subId});
   return (
     <div className="flex flex-wrap gap-2">
       {materials.map((material) => (

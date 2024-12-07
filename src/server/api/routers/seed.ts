@@ -13,7 +13,7 @@ export const seedRouter = createTRPCRouter({
         .mutation(async ({ input, ctx }) => {
             try {
                 for (const category of input.categories) {
-                    await ctx.db.priceCategory.createMany({
+                    await ctx.db.category.createMany({
                         data: {
                             categoryName: category
                         }
@@ -41,48 +41,7 @@ export const seedRouter = createTRPCRouter({
                 });
             }
         }),
-    createPriceSubCategories: publicProcedure
-        .input(z.object({
-            subcategories: z.object({
-                categoryId: z.string(),
-                subCategoryName: z.string()
-            }).array()
-        }))
-        .mutation(async ({ input, ctx }) => {
-            try {
 
-                for (const sub of input.subcategories) {
-                    await ctx.db.priceSubCategory.create({
-                        data: {
-                            pricecategoryId: sub.categoryId,
-                            subcategoryName: sub.subCategoryName,
-                        }
-                    })
-                }
-
-
-            } catch (error) {
-                if (error instanceof TRPCError) {
-                    console.error(error.message);
-                    throw new TRPCError({
-                        code: error.code,
-                        message: error.message,
-                    });
-                }
-                else if (error instanceof TRPCClientError) {
-                    console.error(error.message)
-                    throw new TRPCError({
-                        code: 'INTERNAL_SERVER_ERROR',
-                        message: 'database connection timeout'
-                    })
-                }
-                console.error(error);
-                throw new TRPCError({
-                    code: "INTERNAL_SERVER_ERROR",
-                    message: "Something went wrong.",
-                });
-            }
-        }),
 
     createCategories: publicProcedure
         .input(z.object({ categories: z.string().array() }))
@@ -220,7 +179,7 @@ export const seedRouter = createTRPCRouter({
                     await ctx.db.carbonSection.create({
                         data: {
                             sectionType: section.sectionName as SectionTypeProps,
-                            subcategoryId: section.subcategoryId,
+                            subCategoryId: section.subcategoryId,
                         }
                     })
                 }

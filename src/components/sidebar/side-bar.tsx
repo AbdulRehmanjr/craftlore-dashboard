@@ -23,12 +23,9 @@ const data = {
       url: "#",
       icon: Grid,
       items: [
-        { title: "Listing", url: "/dashboard/artisan" },
+        { title: "Listing", url: "/dashboard/listing" },
         { title: "Ranking", url: "/dashboard/business" },
         { title: "Blacklist", url: "/dashboard/institute" },
-        { title: "Artisan", url: "/dashboard/artisan" },
-        { title: "Business", url: "/dashboard/business" },
-        { title: "Institute", url: "/dashboard/institute" },
       ],
     },
     {

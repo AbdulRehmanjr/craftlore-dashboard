@@ -16,13 +16,13 @@ export const CarbonSubCategoryDelete = ({
 }) => {
   const utils = api.useUtils();
   const { toast } = useToast();
-  const deleteCategory = api.carbon.deleteSubCategory.useMutation({
+  const deleteCategory = api.category.deleteSubCategory.useMutation({
     onSuccess: async () => {
       toast({
         title: "Success!",
         description: "Sub Category deleted successfully.",
       });
-         await utils.carbon.getSubByCatId.invalidate({categoryId:categoryId});
+         await utils.category.getSubByCatId.invalidate({categoryId:categoryId});
     },
     onError: (error) => {
       toast({

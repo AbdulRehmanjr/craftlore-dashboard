@@ -20,7 +20,7 @@ export default async function CarbonCategoryPage({
 }: SearchProps) {
   const params = await searchParams;
 
-  void api.price.getSubByCatId.prefetch({categoryId:params.categoryId});
+  void api.category.getSubByCatId.prefetch({categoryId:params.categoryId});
   return (
     <HydrateClient>
       <div className="my-2 flex flex-col justify-center gap-4">

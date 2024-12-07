@@ -37,14 +37,14 @@ export const CarbonCategoryForm = () => {
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
   });
-  const createCategory = api.carbon.createCategory.useMutation({
+  const createCategory = api.category.createCategory.useMutation({
     onSuccess: async () => {
       toast({
         title: "Success!",
         description: "Category added successfully.",
       });
       form.reset();
-      await utils.carbon.getCategories.invalidate();
+      await utils.category.getCategories.invalidate();
     },
     onError: (error) => {
       toast({

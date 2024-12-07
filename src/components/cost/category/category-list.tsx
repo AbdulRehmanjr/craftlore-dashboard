@@ -11,8 +11,9 @@ import { Info } from "lucide-react";
 import Link from "next/link";
 import { PriceCategoryDelete } from "~/components/cost/category/delete-category";
 
+
 export const PriceCategoryList =  () => {
-  const [categories] =  api.price.getCategories.useSuspenseQuery();
+  const [categories] =  api.category.getCategories.useSuspenseQuery();
   return (
     <>
       {categories.map((category) => (
