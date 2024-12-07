@@ -37,14 +37,14 @@ export const PriceCategoryForm = () => {
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
   });
-  const createCategory = api.price.createCategory.useMutation({
+  const createCategory = api.category.createCategory.useMutation({
     onSuccess: async () => {
       toast({
         title: "Success!",
         description: "Category added successfully.",
       });
       form.reset();
-      await utils.price.getCategories.invalidate();
+      await utils.category.getCategories.invalidate();
     },
     onError: (error) => {
       toast({

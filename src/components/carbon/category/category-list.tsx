@@ -12,7 +12,7 @@ import Link from "next/link";
 import { CarbonCategoryDelete } from "~/components/carbon/category/delete-category";
 
 export const CarbonCategoryList =  () => {
-  const [categories] =  api.carbon.getCategories.useSuspenseQuery();
+  const [categories] =  api.category.getCategories.useSuspenseQuery();
   return (
     <>
       {categories.map((category) => (

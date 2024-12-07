@@ -85,6 +85,7 @@ type MaterialProps = {
     materialName: string
     subcategoryId: string
 }
+
 type ValueProps = {
     valueId: string
     value: string
@@ -94,24 +95,6 @@ type ValueProps = {
 }
 
 type SectionTypeProps =
-    "None" |
-    "Quality" |
-    "ProductLine" |
-    "RawMaterial" |
-    "Processing" |
-    "ProductionMethod" |
-    "Packaging" |
-    "Transportation" |
-    "Crafting" |
-    "Installation" |
-    "Finishing" |
-    "Preparation" |
-    "CookingProcess" |
-    "PaintingAndLacquering" |
-    "Embroidery"
-
-
-type PriceSectionTypeProps =
     "None" |
     "MaterialType" |
     "Quality" |
@@ -145,4 +128,6 @@ type PriceSectionTypeProps =
     "Preparation" |
     "CookingProcess" |
     "PaintingAndLacquering" |
-    "Embroidery"
+    "Embroidery" | 
+    "ProductLine" |
+    "ProductionMethod" 

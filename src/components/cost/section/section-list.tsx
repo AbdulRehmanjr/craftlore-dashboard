@@ -25,21 +25,21 @@ type SectionValue = {
   valueId: string;
   priceSectionId: string;
   materialId: string;
-  cost: string;
+  cost: number;
   name: string;
   new: boolean;
 };
 
 type Section = {
   priceSectionId: string;
-  priceSubCategoryId: string;
-  priceSectionType: PriceSectionTypeProps;
-  PriceValue: SectionValue[];
+  subCategoryId: string;
+  sectionType: SectionTypeProps;
+  values: SectionValue[];
 };
 
 export const PriceSectionList = ({ subId }: { subId: string }) => {
   const { toast } = useToast();
-  const [materials] = api.price.getAllMaterials.useSuspenseQuery({
+  const [materials] = api.category.getAllMaterials.useSuspenseQuery({
     subId: subId,
   });
   const [sections] = api.price.getSectionsBySubCategory.useSuspenseQuery({
@@ -53,9 +53,9 @@ export const PriceSectionList = ({ subId }: { subId: string }) => {
       setEditableSections(
         sections.map((section) => ({
           ...section,
-          PriceValue:
-            section.PriceValue.length > 0
-              ? section.PriceValue.map((value) => ({
+          values:
+            section.values.length > 0
+              ? section.values.map((value) => ({
                   ...value,
                   cost: value.value,
                   new: false,
@@ -104,7 +104,7 @@ export const PriceSectionList = ({ subId }: { subId: string }) => {
       valueId: uuidv4(),
       priceSectionId: sectionId,
       materialId: "",
-      cost: "0",
+      cost: 0,
       new: true,
       name: "",
     };
@@ -120,12 +120,12 @@ export const PriceSectionList = ({ subId }: { subId: string }) => {
         console.error("Section not found at index", sectionIndex);
         return prevSections;
       }
-      // Ensure PriceValue array exists
+      // Ensure values array exists
       updatedSections[sectionIndex] = {
         ...updatedSections[sectionIndex],
-        PriceValue: updatedSections[sectionIndex].PriceValue
+        values: updatedSections[sectionIndex].values
           ? [
-              ...updatedSections[sectionIndex].PriceValue,
+              ...updatedSections[sectionIndex].values,
               createNewValue(updatedSections[sectionIndex].priceSectionId),
             ]
           : [createNewValue(updatedSections[sectionIndex].priceSectionId)],
@@ -135,7 +135,6 @@ export const PriceSectionList = ({ subId }: { subId: string }) => {
     });
   };
 
-  // Function to update a value
   const updateValue = (
     sectionIndex: number,
     valueIndex: number,
@@ -144,10 +143,15 @@ export const PriceSectionList = ({ subId }: { subId: string }) => {
   ) => {
     setEditableSections((prevSections) => {
       const updatedSections = [...prevSections];
-
+  
       // Null check and type guard
-      if (updatedSections[sectionIndex]?.PriceValue?.[valueIndex]) {
-        updatedSections[sectionIndex].PriceValue[valueIndex][field] = newValue;
+      if (updatedSections[sectionIndex]?.values?.[valueIndex]) {
+        if (field === "cost") {
+          // Convert to number, default to 0 if conversion fails
+          updatedSections[sectionIndex].values[valueIndex][field] = Number(newValue) || 0;
+        } else {
+          updatedSections[sectionIndex].values[valueIndex][field] = newValue;
+        }
       }
       return updatedSections;
     });
@@ -160,31 +164,31 @@ export const PriceSectionList = ({ subId }: { subId: string }) => {
       const currentSection = updatedSections[sectionIndex];
 
       // Null checks
-      if (currentSection?.PriceValue) {
+      if (currentSection?.values) {
         // Remove the value
-        currentSection.PriceValue.splice(valueIndex, 1);
+        currentSection.values.splice(valueIndex, 1);
       }
       return updatedSections;
     });
   };
 
   const handleSave = (sectionIndex: number, valueIndex: number) => {
-    const value = editableSections[sectionIndex]!.PriceValue[valueIndex];
+    const value = editableSections[sectionIndex]!.values[valueIndex];
     if (value?.new) {
       if (value?.materialId && value.cost && value.name) {
         const valueToSave = {
           sectionId: value.priceSectionId,
           materialId: value.materialId,
           valueName: value.name,
-          value: value.cost,
+          value: value.cost, // Already a number
         };
-
+  
         createValueProps.mutate(valueToSave);
-
+  
         setEditableSections((prevSections) => {
           const updatedSections = [...prevSections];
-          if (updatedSections[sectionIndex]?.PriceValue?.[valueIndex]) {
-            updatedSections[sectionIndex].PriceValue[valueIndex].new = false;
+          if (updatedSections[sectionIndex]?.values?.[valueIndex]) {
+            updatedSections[sectionIndex].values[valueIndex].new = false;
           }
           return updatedSections;
         });
@@ -194,9 +198,9 @@ export const PriceSectionList = ({ subId }: { subId: string }) => {
         const valueToSave = {
           valueId: value.valueId,
           valueName: value.name,
-          value: value.cost,
+          value: value.cost, // Already a number
         };
-
+  
         updateValueProps.mutate(valueToSave);
       }
     }
@@ -207,7 +211,7 @@ export const PriceSectionList = ({ subId }: { subId: string }) => {
       {editableSections.map((section, sectionIndex) => (
         <Card key={section.priceSectionId} className="col-span-2">
           <CardHeader className="grid gap-2">
-            <CardTitle>{section.priceSectionType}</CardTitle>
+            <CardTitle>{section.sectionType}</CardTitle>
             <Button
               variant="outline"
               onClick={() => addValue(sectionIndex)}
@@ -217,7 +221,7 @@ export const PriceSectionList = ({ subId }: { subId: string }) => {
             </Button>
           </CardHeader>
           <CardContent className="space-y-2">
-            {section.PriceValue.map((value, valueIndex) => (
+            {section.values.map((value, valueIndex) => (
               <div key={value.valueId} className="flex items-center gap-2">
                 <div className="flex w-full items-center gap-2">
                   <Input
@@ -262,7 +266,7 @@ export const PriceSectionList = ({ subId }: { subId: string }) => {
                   <div className="flex items-center">
                     <Input
                       placeholder="Cost"
-                      value={value.cost ?? '0'}
+                      value={value.cost ?? 0}
                       onChange={(e) =>
                         updateValue(
                           sectionIndex,

@@ -14,7 +14,7 @@ type ComponentProps ={
 
 export const PriceMaterialList =  ({subId}:ComponentProps) => {
 
-  const [materials] =  api.price.getAllMaterials.useSuspenseQuery({subId:subId});
+  const [materials] =  api.category.getAllMaterials.useSuspenseQuery({subId:subId});
   return (
     <div className="flex flex-wrap gap-2">
       {materials.map((material) => (
@@ -23,7 +23,7 @@ export const PriceMaterialList =  ({subId}:ComponentProps) => {
             <CardTitle>{material.materialName}</CardTitle>
           </CardHeader>
           <CardFooter className="flex gap-2 w-full">
-            <PriceMaterialDelete materialId={material.materialId} subId={material.pricesubcategoryId}/>
+            <PriceMaterialDelete materialId={material.materialId} subId={material.subcategoryId}/>
           </CardFooter>
         </Card>
       ))}

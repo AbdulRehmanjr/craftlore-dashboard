@@ -14,13 +14,13 @@ export const PriceCategoryDelete = ({
 }) => {
   const utils = api.useUtils();
   const { toast } = useToast();
-  const deleteCategory = api.price.deleteCategory.useMutation({
+  const deleteCategory = api.category.deleteCategory.useMutation({
     onSuccess: async () => {
       toast({
         title: "Success!",
         description: "Category deleted successfully.",
       });
-         await utils.carbon.getCategories.invalidate();
+         await utils.category.getCategories.invalidate();
     },
     onError: (error) => {
       toast({
