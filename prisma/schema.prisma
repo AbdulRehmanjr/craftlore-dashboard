@@ -334,6 +334,14 @@ model PriceValue {
     material       Material     @relation(fields: [materialId], references: [materialId], onDelete: Cascade, onUpdate: Cascade)
 }
 
+model GIReport {
+    giId        String @id @default(cuid())
+    fullName    String @default("none")
+    email       String @default("none")
+    report      String @default("none")
+    productCode String @default("none")
+}
+
 enum SectionType {
     None
     MaterialType

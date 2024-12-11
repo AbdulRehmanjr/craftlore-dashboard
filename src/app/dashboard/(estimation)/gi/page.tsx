@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { CategoryForm } from "~/components/forms/category/add-category";
-import { CategoryList } from "~/components/forms/category/category-list";
+import { Suspense } from "react";
+import { GITable } from "~/components/gi/gi-table";
+import { TableSkeleton } from "~/components/skeletons/table";
 import {
   Breadcrumb,
   BreadcrumbList,
@@ -10,16 +11,14 @@ import {
   BreadcrumbSeparator,
   BreadcrumbPage,
 } from "~/components/ui/breadcrumb";
-
 import { auth } from "~/server/auth";
 import { api } from "~/trpc/server";
 import { HydrateClient } from "~/trpc/server";
 
-export default  async function PriceEstimationPage() {
-
-  const session = await auth()
-  if(!session) redirect('/')
-  void api.category.getCategories.prefetch();
+export default async function CarbonEstimationPage() {
+  const session = await auth();
+  if (!session) redirect("/");
+  void api.gi.giReports.prefetch();
   return (
     <HydrateClient>
       <div className="my-2 flex flex-col justify-center gap-4">
@@ -32,16 +31,21 @@ export default  async function PriceEstimationPage() {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>Category</BreadcrumbPage>
+              <BreadcrumbPage>GI Reporting</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
       </div>
-      <section className="grid grid-cols-12 gap-3 rounded-lg border border-dashed p-5 shadow-sm md:p-10">
-          <div className="col-span-12 flex justify-end">
-            <CategoryForm/>
-          </div>
-          <CategoryList link="/dashboard/price"/>
+      <section className="grid gap-3 rounded-lg border border-dashed p-5 shadow-sm md:p-10">
+        <Suspense
+          fallback={
+            <TableSkeleton
+              headers={["Full name", "Email", "Product code", "Report"]}
+            />
+          }
+        >
+          <GITable />
+        </Suspense>
       </section>
     </HydrateClient>
   );

@@ -8,6 +8,7 @@ import { Button } from "~/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogTitle,
   DialogTrigger,
 } from "~/components/ui/dialog";
@@ -23,28 +24,30 @@ import {
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
 
-
 const formSchema = z.object({
-  categoryName: z.string(),
+  subCategoryName: z.string(),
 });
 
 type FormData = z.infer<typeof formSchema>;
 
+type FormProps  = {
+  categoryId:string
+}
 
-export const CarbonCategoryForm = () => {
+export const SubCategoryForm = ({categoryId}:FormProps) => {
   const utils = api.useUtils();
   const { toast } = useToast();
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
   });
-  const createCategory = api.category.createCategory.useMutation({
+  const createCategory = api.category.createSubCategory.useMutation({
     onSuccess: async () => {
       toast({
         title: "Success!",
-        description: "Category added successfully.",
+        description: "Sub Category added successfully.",
       });
       form.reset();
-      await utils.category.getCategories.invalidate();
+      await utils.category.getSubByCatId.invalidate({categoryId:categoryId});
     },
     onError: (error) => {
       toast({
@@ -56,7 +59,7 @@ export const CarbonCategoryForm = () => {
   });
 
   const onSubmission = (data: FormData) => {
-    createCategory.mutate({categoryName:data.categoryName})
+    createCategory.mutate({ categoryId:categoryId,subName: data.subCategoryName });
   };
 
   return (
@@ -64,22 +67,26 @@ export const CarbonCategoryForm = () => {
       <DialogTrigger asChild>
         <Button className="flex items-center space-x-2">
           <PlusIcon className="h-5 w-5" />
-          <span>Add Category</span>
+          <span>Add Subcategory</span>
         </Button>
       </DialogTrigger>
       <DialogContent>
-        <DialogTitle>Add New Category</DialogTitle>
+        <DialogTitle>Add new sub category</DialogTitle>
+        <DialogDescription>You can add sub categories thtough this form</DialogDescription>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmission)} className="grid gap-2">
+          <form
+            onSubmit={form.handleSubmit(onSubmission)}
+            className="grid gap-2"
+          >
             <FormField
               control={form.control}
-              name="categoryName"
+              name="subCategoryName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Category name</FormLabel>
+                  <FormLabel>Subcategory name</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Enter the category name"
+                      placeholder="Enter the sub category"
                       {...field}
                       value={field.value ?? ""}
                     />

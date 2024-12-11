@@ -6,7 +6,7 @@ import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 
 
-export const CategoryRouter = createTRPCRouter({
+export const categoryRouter = createTRPCRouter({
 
     getCategories: protectedProcedure
         .query(async ({ ctx }) => {

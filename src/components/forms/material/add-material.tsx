@@ -8,7 +8,6 @@ import { Button } from "~/components/ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogTitle,
   DialogTrigger,
 } from "~/components/ui/dialog";
@@ -25,29 +24,28 @@ import {
 import { Input } from "~/components/ui/input";
 
 const formSchema = z.object({
-  subCategoryName: z.string(),
+  materialName: z.string(),
 });
 
 type FormData = z.infer<typeof formSchema>;
-
-type FormProps  = {
-  categoryId:string
+type ComponentProps  = {
+    subId:string
 }
 
-export const PriceSubCategoryForm = ({categoryId}:FormProps) => {
+export const MaterialForm = ({subId}:ComponentProps) => {
   const utils = api.useUtils();
   const { toast } = useToast();
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
   });
-  const createCategory = api.category.createSubCategory.useMutation({
+  const createMaterial = api.category.createMaterial.useMutation({
     onSuccess: async () => {
       toast({
         title: "Success!",
-        description: "Sub Category added successfully.",
+        description: "Material added successfully.",
       });
       form.reset();
-      await utils.category.getSubByCatId.invalidate({categoryId:categoryId});
+      await utils.category.getAllMaterials.invalidate({subId:subId});
     },
     onError: (error) => {
       toast({
@@ -59,7 +57,7 @@ export const PriceSubCategoryForm = ({categoryId}:FormProps) => {
   });
 
   const onSubmission = (data: FormData) => {
-    createCategory.mutate({ categoryId:categoryId,subName: data.subCategoryName });
+    createMaterial.mutate({materialName:data.materialName,subId:subId})
   };
 
   return (
@@ -67,26 +65,22 @@ export const PriceSubCategoryForm = ({categoryId}:FormProps) => {
       <DialogTrigger asChild>
         <Button className="flex items-center space-x-2">
           <PlusIcon className="h-5 w-5" />
-          <span>Add Subcategory</span>
+          <span>Add Material</span>
         </Button>
       </DialogTrigger>
       <DialogContent>
-        <DialogTitle>Add new sub category</DialogTitle>
-        <DialogDescription>You can add sub categories thtough this form</DialogDescription>
+        <DialogTitle>Add New Material</DialogTitle>
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmission)}
-            className="grid gap-2"
-          >
+          <form onSubmit={form.handleSubmit(onSubmission)} className="grid gap-2">
             <FormField
               control={form.control}
-              name="subCategoryName"
+              name="materialName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Subcategory name</FormLabel>
+                  <FormLabel>Materila name</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Enter the sub category"
+                      placeholder="Enter the material name"
                       {...field}
                       value={field.value ?? ""}
                     />
@@ -98,15 +92,15 @@ export const PriceSubCategoryForm = ({categoryId}:FormProps) => {
             <Button
               type="submit"
               className="w-full max-w-md"
-              disabled={createCategory.isPending}
+              disabled={createMaterial.isPending}
             >
-              {createCategory.isPending ? (
+              {createMaterial.isPending ? (
                 <>
                   <RefreshCcw className="mr-2 h-4 w-4 animate-spin" />
                   Please wait...
                 </>
               ) : (
-                "Create category"
+                "Create material"
               )}
             </Button>
           </form>

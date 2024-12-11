@@ -4,23 +4,34 @@ import { Trash } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import { useToast } from "~/hooks/use-toast";
 import { api } from "~/trpc/react";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "~/components/ui/alert-dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "~/components/ui/alert-dialog";
 
-
-export const PriceCategoryDelete = ({
+export const SubCategoryDelete = ({
+  subcategoryId,
   categoryId,
 }: {
+  subcategoryId: string;
   categoryId: string;
 }) => {
   const utils = api.useUtils();
   const { toast } = useToast();
-  const deleteCategory = api.category.deleteCategory.useMutation({
+  const deleteCategory = api.category.deleteSubCategory.useMutation({
     onSuccess: async () => {
       toast({
         title: "Success!",
-        description: "Category deleted successfully.",
+        description: "Sub Category deleted successfully.",
       });
-         await utils.category.getCategories.invalidate();
+      await utils.category.getSubByCatId.invalidate({ categoryId: categoryId });
     },
     onError: (error) => {
       toast({
@@ -32,14 +43,14 @@ export const PriceCategoryDelete = ({
   });
 
   const onClick = () => {
-    deleteCategory.mutate({ categoryId: categoryId });
+    deleteCategory.mutate({ subcategoryId: subcategoryId });
   };
 
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="destructive" >
-            <Trash/> Delete
+        <Button variant="destructive">
+          <Trash /> Delete
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
@@ -52,9 +63,15 @@ export const PriceCategoryDelete = ({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel asChild>
-            <Button variant="outline" type="button">Cancel</Button>
+            <Button variant="outline" type="button">
+              Cancel
+            </Button>
           </AlertDialogCancel>
-          <AlertDialogAction asChild><Button type="button" variant="destructive" onClick={onClick}>Confirm</Button></AlertDialogAction>
+          <AlertDialogAction asChild>
+            <Button type="button" variant="destructive" onClick={onClick}>
+              Confirm
+            </Button>
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
