@@ -23,30 +23,28 @@ import {
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
 
+
 const formSchema = z.object({
-  subCategoryName: z.string(),
+  categoryName: z.string(),
 });
 
 type FormData = z.infer<typeof formSchema>;
 
-type FormProps  = {
-  categoryId:string
-}
 
-export const CarbonSubCategoryForm = ({categoryId}:FormProps) => {
+export const CategoryForm = () => {
   const utils = api.useUtils();
   const { toast } = useToast();
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
   });
-  const createCategory = api.category.createSubCategory.useMutation({
+  const createCategory = api.category.createCategory.useMutation({
     onSuccess: async () => {
       toast({
         title: "Success!",
-        description: "Sub Category added successfully.",
+        description: "Category added successfully.",
       });
       form.reset();
-      await utils.category.getSubByCatId.invalidate({categoryId:categoryId});
+      await utils.category.getCategories.invalidate();
     },
     onError: (error) => {
       toast({
@@ -58,7 +56,7 @@ export const CarbonSubCategoryForm = ({categoryId}:FormProps) => {
   });
 
   const onSubmission = (data: FormData) => {
-    createCategory.mutate({ categoryId:categoryId,subName: data.subCategoryName });
+    createCategory.mutate({categoryName:data.categoryName})
   };
 
   return (
@@ -66,25 +64,22 @@ export const CarbonSubCategoryForm = ({categoryId}:FormProps) => {
       <DialogTrigger asChild>
         <Button className="flex items-center space-x-2">
           <PlusIcon className="h-5 w-5" />
-          <span>Add Subcategory</span>
+          <span>Add Category</span>
         </Button>
       </DialogTrigger>
       <DialogContent>
-        <DialogTitle>Add new sub category</DialogTitle>
+        <DialogTitle>Add New Category</DialogTitle>
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmission)}
-            className="grid gap-2"
-          >
+          <form onSubmit={form.handleSubmit(onSubmission)} className="grid gap-2">
             <FormField
               control={form.control}
-              name="subCategoryName"
+              name="categoryName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Subcategory name</FormLabel>
+                  <FormLabel>Category name</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Enter the sub category"
+                      placeholder="Enter the category name"
                       {...field}
                       value={field.value ?? ""}
                     />

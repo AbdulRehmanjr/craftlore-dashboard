@@ -5,26 +5,26 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
-import { CarbonSectionForm } from "~/components/carbon/section/add-section";
-import { CarbonSectionList } from "~/components/carbon/section/section-list";
+import { PriceSectionForm } from "~/components/section/cost/add-section";
+import { PriceSectionList } from "~/components/section/cost/section-list";
 
 type SectionFormProps = {
   subId: string;
 };
 
-export const SectionForm = ({ subId }: SectionFormProps) => {
+export const CostSectionForm = ({ subId }: SectionFormProps) => {
   return (
     <Card>
       <CardHeader>
         <CardTitle>Section and value creations</CardTitle>
         <CardDescription>
           Through this form we can create sections and there values for
-          different material here.
+          different material through this image.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
-        <CarbonSectionForm subId={subId}/>
-        <CarbonSectionList subId={subId} />
+        <PriceSectionForm subId={subId}/>
+        <PriceSectionList subId={subId} />
       </CardContent>
     </Card>
   );

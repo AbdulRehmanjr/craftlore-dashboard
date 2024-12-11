@@ -10,13 +10,14 @@ import {
 import { Button } from "~/components/ui/button";
 import { Info } from "lucide-react";
 import Link from "next/link";
-import { PriceSubCategoryDelete } from "~/components/cost/subcategory/delete-sub";
+import { SubCategoryDelete } from "~/components/forms/subcategory/delete-sub";
 
 type ComponentProps = {
     categoryId:string
+    link : string
 }
 
-export const PriceSubCategoryList = ({categoryId}:ComponentProps) => {
+export const SubCategoryList = ({categoryId,link}:ComponentProps) => {
   const [subCategories] =  api.category.getSubByCatId.useSuspenseQuery({categoryId:categoryId});
   return (
     <>
@@ -26,9 +27,9 @@ export const PriceSubCategoryList = ({categoryId}:ComponentProps) => {
             <CardTitle>{sub.subcategoryName}</CardTitle>
           </CardHeader>
           <CardFooter className="flex gap-2">
-            <PriceSubCategoryDelete categoryId={categoryId} subcategoryId={sub.subcategoryId}/>
+            <SubCategoryDelete categoryId={categoryId} subcategoryId={sub.subcategoryId}/>
             <Button variant={"default"}  asChild>
-              <Link href={`/dashboard/price/subcategory?subId=${sub.subcategoryId}`}>
+              <Link href={`${link}/subcategory?subId=${sub.subcategoryId}`}>
                 <Info /> Detail
               </Link>
             </Button>

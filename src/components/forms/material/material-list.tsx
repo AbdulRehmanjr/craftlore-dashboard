@@ -6,14 +6,13 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
-import { CarbonMaterialDelete } from "~/components/carbon/material/delete-material";
-
+import { MaterialDelete } from "~/components/forms/material/delete-material";
 
 type ComponentProps ={
     subId:string
 }
 
-export const CarbonMaterialList =  ({subId}:ComponentProps) => {
+export const MaterialList =  ({subId}:ComponentProps) => {
 
   const [materials] =  api.category.getAllMaterials.useSuspenseQuery({subId:subId});
   return (
@@ -24,7 +23,7 @@ export const CarbonMaterialList =  ({subId}:ComponentProps) => {
             <CardTitle>{material.materialName}</CardTitle>
           </CardHeader>
           <CardFooter className="flex gap-2 w-full">
-            <CarbonMaterialDelete materialId={material.materialId} subId={material.subcategoryId}/>
+            <MaterialDelete materialId={material.materialId} subId={material.subcategoryId}/>
           </CardFooter>
         </Card>
       ))}

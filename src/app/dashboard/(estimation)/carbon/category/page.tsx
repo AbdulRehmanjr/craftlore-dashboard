@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { CarbonSubCategoryForm } from "~/components/carbon/subcategory/add-sub";
-import { CarbonSubCategoryList } from "~/components/carbon/subcategory/sub-list";
+import { SubCategoryForm } from "~/components/forms/subcategory/add-sub";
+import { SubCategoryList } from "~/components/forms/subcategory/sub-list";
 import {
   Breadcrumb,
   BreadcrumbList,
@@ -46,9 +46,9 @@ export default async function CarbonCategoryPage({
       </div>
       <section className="grid grid-cols-12 gap-3 rounded-lg border border-dashed p-5 shadow-sm md:p-10">
         <div className="col-span-12 flex justify-end">
-          <CarbonSubCategoryForm categoryId={params.categoryId} />
+          <SubCategoryForm categoryId={params.categoryId} />
         </div>
-        <CarbonSubCategoryList categoryId={params.categoryId} />
+        <SubCategoryList categoryId={params.categoryId} link="/dashboard/carbon" />
       </section>
     </HydrateClient>
   );

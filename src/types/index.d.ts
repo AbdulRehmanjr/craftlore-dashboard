@@ -94,6 +94,14 @@ type ValueProps = {
     materialId: string
 }
 
+type GIReportProps = {
+    giId: string
+    fullName: string
+    email: string
+    report: string
+    productCode: string
+}
+
 type SectionTypeProps =
     "None" |
     "MaterialType" |
@@ -128,6 +136,6 @@ type SectionTypeProps =
     "Preparation" |
     "CookingProcess" |
     "PaintingAndLacquering" |
-    "Embroidery" | 
+    "Embroidery" |
     "ProductLine" |
     "ProductionMethod" 

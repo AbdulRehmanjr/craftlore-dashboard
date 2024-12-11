@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { CarbonCategoryForm } from "~/components/carbon/category/add-category";
-import { CarbonCategoryList } from "~/components/carbon/category/category-list";
+import { CategoryForm } from "~/components/forms/category/add-category";
+import { CategoryList } from "~/components/forms/category/category-list";
 import {
   Breadcrumb,
   BreadcrumbList,
@@ -38,9 +38,9 @@ export default  async function CarbonEstimationPage() {
       </div>
       <section className="grid grid-cols-12 gap-3 rounded-lg border border-dashed p-5 shadow-sm md:p-10">
           <div className="col-span-12 flex justify-end">
-            <CarbonCategoryForm/>
+            <CategoryForm/>
           </div>
-          <CarbonCategoryList/>
+          <CategoryList link="/dashboard/carbon"/>
       </section>
     </HydrateClient>
   );

@@ -21,11 +21,11 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 
-// Define the type for your section and value
+
 type SectionValue = {
   valueId: string;
   carbonsectionId: string;
-  materialId: string; // Changed from 'name' to 'materialId' if referencing Material by ID
+  materialId: string; 
   lowerLimit: string;
   upperLimit: string;
   name: string;

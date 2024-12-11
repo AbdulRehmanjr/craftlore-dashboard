@@ -9,9 +9,10 @@ import {
 import { Button } from "~/components/ui/button";
 import { Info } from "lucide-react";
 import Link from "next/link";
-import { CarbonCategoryDelete } from "~/components/carbon/category/delete-category";
+import { CategoryDelete } from "~/components/forms/category/delete-category";
 
-export const CarbonCategoryList =  () => {
+
+export const CategoryList =  ({link}:{link:string}) => {
   const [categories] =  api.category.getCategories.useSuspenseQuery();
   return (
     <>
@@ -21,9 +22,9 @@ export const CarbonCategoryList =  () => {
             <CardTitle>{category.categoryName}</CardTitle>
           </CardHeader>
           <CardFooter className="flex gap-2 w-full">
-            <CarbonCategoryDelete categoryId={category.categoryId}/>
+            <CategoryDelete categoryId={category.categoryId}/>
             <Button variant={"default"} asChild>
-              <Link href={`/dashboard/carbon/category?categoryId=${category.categoryId}`}>
+              <Link href={`${link}/category?categoryId=${category.categoryId}`}>
                 <Info /> Detail
               </Link>
             </Button>

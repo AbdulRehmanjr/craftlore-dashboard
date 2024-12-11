@@ -7,7 +7,7 @@ import { api } from "~/trpc/react";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "~/components/ui/alert-dialog";
 
 
-export const PriceMaterialDelete = ({
+export const MaterialDelete = ({
   materialId,
   subId
 }: {

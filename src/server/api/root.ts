@@ -4,7 +4,9 @@ import { lisitingRouter } from "~/server/api/routers/listing";
 import { carbonRouter } from "~/server/api/routers/carbon";
 import { seedRouter } from "~/server/api/routers/seed";
 import { priceRouter } from "~/server/api/routers/price";
-import { CategoryRouter } from "~/server/api/routers/category";
+import { categoryRouter } from "~/server/api/routers/category";
+import { giRouter } from "~/server/api/routers/gi";
+
 
 
 export const appRouter = createTRPCRouter({
@@ -13,7 +15,8 @@ export const appRouter = createTRPCRouter({
   carbon:carbonRouter,
   seed:seedRouter,
   price:priceRouter,
-  category:CategoryRouter
+  category:categoryRouter,
+  gi:giRouter,
 });
 
 export type AppRouter = typeof appRouter;

@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { CarbonMaterialForm } from "~/components/carbon/material/add-material";
-import { CarbonMaterialList } from "~/components/carbon/material/material-list";
-import { SectionForm } from "~/components/carbon/section/section-form";
+import { MaterialForm } from "~/components/forms/material/add-material";
+import { MaterialList } from "~/components/forms/material/material-list";
+import { SectionForm } from "~/components/section/carbon/section-form";
 import {
   Breadcrumb,
   BreadcrumbList,
@@ -60,8 +60,8 @@ export default async function CarbonSubCategoryPage({
             <CardDescription>Material for category</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
-            <CarbonMaterialForm subId={params.subId} />
-            <CarbonMaterialList subId={params.subId} />
+            <MaterialForm subId={params.subId} />
+            <MaterialList subId={params.subId} />
           </CardContent>
         </Card>
         <SectionForm subId={params.subId} />
