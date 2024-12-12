@@ -8,6 +8,45 @@ import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const categoryRouter = createTRPCRouter({
 
+
+    getCategoryId: protectedProcedure
+        .input(z.object({ categoryId: z.string() }))
+        .query(async ({ ctx, input }) => {
+            try {
+                const data: CategoryProps | null = await ctx.db.category.findUnique({
+                    where: {
+                        categoryId: input.categoryId,
+                    }
+                })
+
+                if (!data) throw new TRPCError({
+                    code: 'NOT_FOUND',
+                    message: 'Category not found with given id'
+                })
+                return data
+            } catch (error) {
+                if (error instanceof TRPCClientError) {
+                    console.error(error.message)
+                    throw new TRPCError({
+                        code: 'INTERNAL_SERVER_ERROR',
+                        message: 'database connection timeout'
+                    })
+                }
+                else if (error instanceof TRPCError) {
+                    console.error(error.message)
+                    throw new TRPCError({
+                        code: error.code,
+                        message: error.message
+                    })
+                }
+                console.error(error)
+                throw new TRPCError({
+                    code: 'INTERNAL_SERVER_ERROR',
+                    message: 'Something went wrong'
+                })
+            }
+        }),
+
     getCategories: protectedProcedure
         .query(async ({ ctx }) => {
             try {
@@ -86,6 +125,40 @@ export const categoryRouter = createTRPCRouter({
             }
         }),
 
+    editCategory: protectedProcedure
+        .input(z.object({ categoryId: z.string(), categoryName: z.string() }))
+        .mutation(async ({ ctx, input }) => {
+            try {
+                await ctx.db.category.update({
+                    where: { categoryId: input.categoryId },
+                    data: {
+                        categoryName: input.categoryName
+                    }
+                })
+            } catch (error) {
+                if (error instanceof TRPCClientError) {
+                    console.error(error.message)
+                    throw new TRPCError({
+                        code: 'INTERNAL_SERVER_ERROR',
+                        message: 'database connection timeout'
+                    })
+                }
+                else if (error instanceof TRPCError) {
+                    console.error(error.message);
+                    throw new TRPCError({
+                        code: "INTERNAL_SERVER_ERROR",
+                        message: error.message,
+                    });
+                }
+
+                console.error(error);
+                throw new TRPCError({
+                    code: "INTERNAL_SERVER_ERROR",
+                    message: "Something went wrong.",
+                });
+            }
+        }),
+
     deleteCategory: protectedProcedure
         .input(z.object({ categoryId: z.string() }))
         .mutation(async ({ ctx, input }) => {
@@ -118,6 +191,41 @@ export const categoryRouter = createTRPCRouter({
                 });
             }
         }),
+
+    editSubCategory: protectedProcedure
+        .input(z.object({ subcategoryId: z.string(), subcategoryName: z.string() }))
+        .mutation(async ({ ctx, input }) => {
+            try {
+                await ctx.db.subCategory.update({
+                    where: { subcategoryId: input.subcategoryId },
+                    data: {
+                        subcategoryName: input.subcategoryName
+                    }
+                })
+            } catch (error) {
+                if (error instanceof TRPCClientError) {
+                    console.error(error.message)
+                    throw new TRPCError({
+                        code: 'INTERNAL_SERVER_ERROR',
+                        message: 'database connection timeout'
+                    })
+                }
+                else if (error instanceof TRPCError) {
+                    console.error(error.message);
+                    throw new TRPCError({
+                        code: "INTERNAL_SERVER_ERROR",
+                        message: error.message,
+                    });
+                }
+
+                console.error(error);
+                throw new TRPCError({
+                    code: "INTERNAL_SERVER_ERROR",
+                    message: "Something went wrong.",
+                });
+            }
+        }),
+
 
     createSubCategory: protectedProcedure
         .input(z.object({ categoryId: z.string(), subName: z.string() }))

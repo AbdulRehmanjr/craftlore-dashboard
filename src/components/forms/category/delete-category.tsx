@@ -38,8 +38,8 @@ export const CategoryDelete = ({
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="destructive" >
-            <Trash/> Delete
+        <Button variant="destructive" size="icon"  type="button">
+            <Trash/> 
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
