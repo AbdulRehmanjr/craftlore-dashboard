@@ -1,19 +1,14 @@
-'use client'
+"use client";
 import { api } from "~/trpc/react";
-import {
-  Card,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
+import { Card, CardFooter, CardHeader, CardTitle } from "~/components/ui/card";
 import { Button } from "~/components/ui/button";
 import { Info } from "lucide-react";
 import Link from "next/link";
 import { CategoryDelete } from "~/components/forms/category/delete-category";
+import { EditCategoryForm } from "~/components/forms/category/edit-category";
 
-
-export const CategoryList =  ({link}:{link:string}) => {
-  const [categories] =  api.category.getCategories.useSuspenseQuery();
+export const CategoryList = ({ link }: { link: string }) => {
+  const [categories] = api.category.getCategories.useSuspenseQuery();
   return (
     <>
       {categories.map((category) => (
@@ -21,13 +16,14 @@ export const CategoryList =  ({link}:{link:string}) => {
           <CardHeader>
             <CardTitle>{category.categoryName}</CardTitle>
           </CardHeader>
-          <CardFooter className="flex gap-2 w-full">
-            <CategoryDelete categoryId={category.categoryId}/>
-            <Button variant={"default"} asChild>
+          <CardFooter className="flex w-full gap-2">
+            <Button variant="default" type="button" asChild>
               <Link href={`${link}/category?categoryId=${category.categoryId}`}>
                 <Info /> Detail
               </Link>
             </Button>
+            <EditCategoryForm categoryId={category.categoryId} initialCategoryName={category.categoryName} />
+            <CategoryDelete categoryId={category.categoryId} />
           </CardFooter>
         </Card>
       ))}

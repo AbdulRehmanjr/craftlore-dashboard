@@ -49,8 +49,8 @@ export const SubCategoryDelete = ({
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="destructive">
-          <Trash /> Delete
+        <Button variant="destructive" type="button" size="icon">
+          <Trash /> 
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
