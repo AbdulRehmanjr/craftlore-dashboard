@@ -287,6 +287,7 @@ model SubCategory {
     sections        CarbonSection[]
     Material        Material[]
     PriceSection    PriceSection[]
+    CraftSection    CraftSection[]
 }
 
 model Material {
@@ -340,6 +341,29 @@ model GIReport {
     email       String @default("none")
     report      String @default("none")
     productCode String @default("none")
+}
+
+model CraftSection {
+    craftsectionId  String            @id @default(cuid())
+    sectionName     String            @default("none")
+    subCategoryId   String
+    subCategory     SubCategory       @relation(fields: [subCategoryId], references: [subcategoryId], onDelete: Cascade, onUpdate: Cascade)
+    CraftSubSection CraftSubSection[]
+}
+
+model CraftSubSection {
+    craftsubsectionId String         @id @default(cuid())
+    sectionName       String         @default("none")
+    sectionId         String
+    section           CraftSection   @relation(fields: [sectionId], references: [craftsectionId], onDelete: Cascade, onUpdate: Cascade)
+    CraftContent      CraftContent[]
+}
+
+model CraftContent {
+    craftsubsectionId String          @id @default(cuid())
+    content           String          @default("none")
+    subsectionId      String
+    subSection        CraftSubSection @relation(fields: [subsectionId], references: [craftsubsectionId], onDelete: Cascade, onUpdate: Cascade)
 }
 
 enum SectionType {
