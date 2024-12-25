@@ -23,8 +23,12 @@ export default {
     	},
     	extend: {
     		fontFamily: {
-    			heading: ["var(--font-heading)"],
-    			text: ["var(--font-text)"]
+    			heading: [
+    				'var(--font-heading)'
+    			],
+    			text: [
+    				'var(--font-text)'
+    			]
     		},
     		borderRadius: {
     			lg: 'var(--radius)',
@@ -156,6 +160,22 @@ export default {
     					transform: 'translateX(100%) skewX(-25deg)',
     					opacity: '0'
     				}
+    			},
+    			'accordion-down': {
+    				from: {
+    					height: '0'
+    				},
+    				to: {
+    					height: 'var(--radix-accordion-content-height)'
+    				}
+    			},
+    			'accordion-up': {
+    				from: {
+    					height: 'var(--radix-accordion-content-height)'
+    				},
+    				to: {
+    					height: '0'
+    				}
     			}
     		},
     		animation: {
@@ -165,7 +185,9 @@ export default {
     			'pulse-background-2': 'pulseBackground2 1.5s ease-in-out infinite',
     			'pulse-background': 'pulseBackground 1.5s ease-in-out infinite',
     			'wave-border': 'waveBorder 2s ease-in-out infinite',
-    			flash: 'flash 1s ease-in-out'
+    			flash: 'flash 1s ease-in-out',
+    			'accordion-down': 'accordion-down 0.2s ease-out',
+    			'accordion-up': 'accordion-up 0.2s ease-out'
     		}
     	}
     },

@@ -56,7 +56,7 @@ const data = {
         { title: "Price estimation", url: "/dashboard/price" },
         { title: "GI authentication", url: "/dashboard/employee/create" },
         { title: "Blockchain", url: "/dashboard/employee/create" },
-        { title: "Craft profiling", url: "/dashboard/employee/create" },
+        { title: "Craft profiling", url: "/dashboard/craft-profile" },
       ],
     },
     {
