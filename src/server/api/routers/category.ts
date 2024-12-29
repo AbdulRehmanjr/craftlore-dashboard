@@ -50,7 +50,11 @@ export const categoryRouter = createTRPCRouter({
     getCategories: protectedProcedure
         .query(async ({ ctx }) => {
             try {
-                const data: CategoryProps[] = await ctx.db.category.findMany()
+                const data: CategoryProps[] = await ctx.db.category.findMany({
+                    orderBy: {
+                        rank: 'asc'
+                    }
+                })
                 return data
             } catch (error) {
                 if (error instanceof TRPCClientError) {
@@ -93,12 +97,13 @@ export const categoryRouter = createTRPCRouter({
         }),
 
     createCategory: protectedProcedure
-        .input(z.object({ categoryName: z.string() }))
+        .input(z.object({ categoryName: z.string(), rank: z.number() }))
         .mutation(async ({ ctx, input }) => {
             try {
                 await ctx.db.category.create({
                     data: {
-                        categoryName: input.categoryName
+                        categoryName: input.categoryName,
+                        rank: input.rank
                     }
                 })
             } catch (error) {
@@ -126,13 +131,18 @@ export const categoryRouter = createTRPCRouter({
         }),
 
     editCategory: protectedProcedure
-        .input(z.object({ categoryId: z.string(), categoryName: z.string() }))
+        .input(z.object({
+            categoryId: z.string(),
+            categoryName: z.string(),
+            rank: z.number()
+        }))
         .mutation(async ({ ctx, input }) => {
             try {
                 await ctx.db.category.update({
                     where: { categoryId: input.categoryId },
                     data: {
-                        categoryName: input.categoryName
+                        categoryName: input.categoryName,
+                        rank: input.rank
                     }
                 })
             } catch (error) {

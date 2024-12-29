@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "CraftSection" ADD COLUMN     "rank" INTEGER NOT NULL DEFAULT 100;

@@ -25,22 +25,30 @@ import { Input } from "~/components/ui/input";
 
 const formSchema = z.object({
   sectionName: z.string(),
+  rank: z.number(),
 });
 
 type FormData = z.infer<typeof formSchema>;
 
 type ComponentProps = {
-    sectionId:string
-    sectionName:string
-}
-export const ProfileSectionUpdation = ({ sectionId,sectionName }: ComponentProps) => {
+  sectionId: string;
+  sectionName: string;
+  rank: number;
+};
+
+export const ProfileSectionUpdation = ({
+  sectionId,
+  sectionName,
+  rank,
+}: ComponentProps) => {
   const utils = api.useUtils();
   const { toast } = useToast();
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
-    defaultValues:{
-        sectionName:sectionName
-    }
+    defaultValues: {
+      sectionName: sectionName,
+      rank: rank,
+    },
   });
   const updateSection = api.craft.updateSection.useMutation({
     onSuccess: async () => {
@@ -64,6 +72,7 @@ export const ProfileSectionUpdation = ({ sectionId,sectionName }: ComponentProps
     updateSection.mutate({
       sectionId: sectionId,
       sectionName: data.sectionName,
+      rank: data.rank,
     });
   };
 
@@ -92,6 +101,34 @@ export const ProfileSectionUpdation = ({ sectionId,sectionName }: ComponentProps
                       placeholder="Enter the section name"
                       {...field}
                       value={field.value ?? ""}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="rank"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Section rank</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter the section rank"
+                      {...field}
+                      value={field.value ?? ""}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        if (
+                          value === "" ||
+                          (/^\d+$/.test(value) && parseInt(value) > 0)
+                        ) {
+                          field.onChange(
+                            value === "" ? undefined : parseInt(value),
+                          );
+                        }
+                      }}
                     />
                   </FormControl>
                   <FormMessage />

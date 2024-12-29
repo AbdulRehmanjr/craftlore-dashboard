@@ -23,13 +23,12 @@ import {
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
 
-
 const formSchema = z.object({
   categoryName: z.string(),
+  rank: z.number(),
 });
 
 type FormData = z.infer<typeof formSchema>;
-
 
 export const CategoryForm = () => {
   const utils = api.useUtils();
@@ -56,7 +55,7 @@ export const CategoryForm = () => {
   });
 
   const onSubmission = (data: FormData) => {
-    createCategory.mutate({categoryName:data.categoryName})
+    createCategory.mutate({ categoryName: data.categoryName, rank: data.rank });
   };
 
   return (
@@ -70,7 +69,10 @@ export const CategoryForm = () => {
       <DialogContent>
         <DialogTitle>Add New Category</DialogTitle>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmission)} className="grid gap-2">
+          <form
+            onSubmit={form.handleSubmit(onSubmission)}
+            className="grid gap-2"
+          >
             <FormField
               control={form.control}
               name="categoryName"
@@ -88,6 +90,35 @@ export const CategoryForm = () => {
                 </FormItem>
               )}
             />
+            <FormField
+              control={form.control}
+              name="rank"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Category rank</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter the category rank"
+                      {...field}
+                      value={field.value ?? ""}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        if (
+                          value === "" ||
+                          (/^\d+$/.test(value) && parseInt(value) > 0)
+                        ) {
+                          field.onChange(
+                            value === "" ? undefined : parseInt(value),
+                          );
+                        }
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <Button
               type="submit"
               className="w-full max-w-md"
