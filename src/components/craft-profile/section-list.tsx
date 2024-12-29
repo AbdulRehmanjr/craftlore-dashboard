@@ -10,11 +10,13 @@ import {
 import { ProfileSectionUpdation } from "~/components/craft-profile/section/section-updation";
 import { ProfileSubSectionCreation } from "~/components/craft-profile/sub-section/sub-creation";
 import { ProfileSubSectionUpdation } from "~/components/craft-profile/sub-section/sub-updation";
-import { Textarea } from "../ui/textarea";
-import { Button } from "../ui/button";
+import { Textarea } from "~/components/ui/textarea";
+import { Button } from "~/components/ui/button";
 import { useEffect, useState } from "react";
 import { useToast } from "~/hooks/use-toast";
 import { Loader2 } from "lucide-react";
+import { SectionDeletion } from "~/components/craft-profile/section/section-deletion";
+import { SubSectionDeletion } from "./sub-section/sub-deletion";
 
 type ComponentProps = {
   subId: string;
@@ -73,25 +75,29 @@ export const ProfileSectionList = ({ subId }: ComponentProps) => {
   return (
     <Accordion type="multiple" className="space-y-4">
       {sections.map((data, index) => (
-        <AccordionItem 
-          value={data.craftsectionId} 
+        <AccordionItem
+          value={data.craftsectionId}
           key={index}
-          className="border rounded-lg px-6"
+          className="rounded-lg border px-6"
         >
           <div className="flex items-center py-4">
-            <AccordionTrigger className="hover:no-underline w-full">
-              <h3 className="text-xl font-semibold">{data.sectionName}</h3>
+            <AccordionTrigger className="w-full hover:no-underline">
+              <h3 className="text-xl font-semibold">
+                {data.rank}. {data.sectionName}
+              </h3>
             </AccordionTrigger>
             <div className="ml-4">
               <ProfileSectionUpdation
                 sectionId={data.craftsectionId}
                 sectionName={data.sectionName}
+                rank={data.rank}
               />
+              <SectionDeletion sectionId={data.craftsectionId} subId={subId} />
             </div>
           </div>
           <AccordionContent>
             <div className="py-4">
-              <div className="flex items-center justify-between mb-4">
+              <div className="mb-4 flex items-center justify-between">
                 <p className="text-sm text-muted-foreground">
                   Entering data for {data.sectionName.toLowerCase()}
                 </p>
@@ -101,25 +107,33 @@ export const ProfileSectionList = ({ subId }: ComponentProps) => {
                 {data.CraftSubSection.map((sub) => (
                   <div key={sub.craftsubsectionId} className="space-y-10">
                     <div className="flex items-center gap-2 rounded-md border-2 p-3 font-heading text-primary">
-                      <p className="">{sub.sectionName}</p>
+                      <p className="">{sub.rank}. {sub.sectionName}</p>
                       <ProfileSubSectionUpdation
                         sectionId={sub.craftsubsectionId}
                         sectionName={sub.sectionName}
+                        rank={sub.rank}
                       />
+                      <SubSectionDeletion subId={sub.craftsubsectionId}/>
+
                     </div>
                     <div className="space-y-2">
                       <Textarea
                         placeholder={`Enter content for ${sub.sectionName}...`}
                         value={contents[sub.craftsubsectionId] ?? ""}
                         onChange={(e) =>
-                          handleContentChange(sub.craftsubsectionId, e.target.value)
+                          handleContentChange(
+                            sub.craftsubsectionId,
+                            e.target.value,
+                          )
                         }
                         className="min-h-[10rem]"
                       />
                       <div className="flex items-center justify-center">
                         <Button
                           type="button"
-                          onClick={() => handleSaveContent(sub.craftsubsectionId)}
+                          onClick={() =>
+                            handleSaveContent(sub.craftsubsectionId)
+                          }
                           disabled={addContent.isPending}
                         >
                           {addContent.isPending ? (

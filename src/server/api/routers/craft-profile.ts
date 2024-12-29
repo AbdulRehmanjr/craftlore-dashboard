@@ -11,6 +11,9 @@ export const craftRouter = createTRPCRouter({
             try {
                 const sections = await ctx.db.craftSection.findMany({
                     where: { subCategoryId: input.subCategoryId },
+                    orderBy: {
+                        rank: 'asc'
+                    },
                     include: {
                         CraftSubSection: {
                             include: {
@@ -47,13 +50,15 @@ export const craftRouter = createTRPCRouter({
         .input(z.object({
             subCategoryId: z.string(),
             sectionName: z.string(),
+            rank: z.number()
         }))
         .mutation(async ({ input, ctx }) => {
             try {
                 await ctx.db.craftSection.create({
                     data: {
                         subCategoryId: input.subCategoryId,
-                        sectionName: input.sectionName
+                        sectionName: input.sectionName,
+                        rank: input.rank
                     },
                 });
 
@@ -84,12 +89,13 @@ export const craftRouter = createTRPCRouter({
         .input(z.object({
             sectionId: z.string(),
             sectionName: z.string(),
+            rank: z.number()
         }))
         .mutation(async ({ input, ctx }) => {
             try {
                 await ctx.db.craftSection.update({
                     where: { craftsectionId: input.sectionId },
-                    data: { sectionName: input.sectionName },
+                    data: { sectionName: input.sectionName, rank: input.rank },
                 });
 
             } catch (error) {
@@ -115,17 +121,52 @@ export const craftRouter = createTRPCRouter({
             }
         }),
 
+    deleteSection: protectedProcedure
+        .input(z.object({ sectionId: z.string() }))
+        .mutation(async ({ ctx, input }) => {
+            try {
+                await ctx.db.craftSection.delete({
+                    where: {
+                        craftsectionId: input.sectionId
+                    }
+                })
+            } catch (error) {
+                if (error instanceof TRPCClientError) {
+                    console.error(error.message)
+                    throw new TRPCError({
+                        code: 'INTERNAL_SERVER_ERROR',
+                        message: 'database connection timeout'
+                    })
+                }
+                else if (error instanceof TRPCError) {
+                    console.error(error.message);
+                    throw new TRPCError({
+                        code: "INTERNAL_SERVER_ERROR",
+                        message: error.message,
+                    });
+                }
+
+                console.error(error);
+                throw new TRPCError({
+                    code: "INTERNAL_SERVER_ERROR",
+                    message: "Something went wrong.",
+                });
+            }
+        }),
+
     createSubSection: protectedProcedure
         .input(z.object({
             sectionId: z.string(),
             sectionName: z.string(),
+            rank: z.number()
         }))
         .mutation(async ({ input, ctx }) => {
             try {
                 await ctx.db.craftSubSection.create({
                     data: {
                         sectionId: input.sectionId,
-                        sectionName: input.sectionName
+                        sectionName: input.sectionName,
+                        rank: input.rank,
                     },
                 });
 
@@ -156,12 +197,13 @@ export const craftRouter = createTRPCRouter({
         .input(z.object({
             sectionId: z.string(),
             sectionName: z.string(),
+            rank: z.number()
         }))
         .mutation(async ({ input, ctx }) => {
             try {
                 await ctx.db.craftSubSection.update({
                     where: { craftsubsectionId: input.sectionId },
-                    data: { sectionName: input.sectionName },
+                    data: { sectionName: input.sectionName, rank: input.rank },
                 });
             } catch (error) {
                 if (error instanceof TRPCError) {
@@ -178,6 +220,39 @@ export const craftRouter = createTRPCRouter({
                         message: 'database connection timeout'
                     })
                 }
+                console.error(error);
+                throw new TRPCError({
+                    code: "INTERNAL_SERVER_ERROR",
+                    message: "Something went wrong.",
+                });
+            }
+        }),
+
+    deleteSubSection: protectedProcedure
+        .input(z.object({ subId: z.string() }))
+        .mutation(async ({ ctx, input }) => {
+            try {
+                await ctx.db.craftSubSection.delete({
+                    where: {
+                        craftsubsectionId: input.subId
+                    }
+                })
+            } catch (error) {
+                if (error instanceof TRPCClientError) {
+                    console.error(error.message)
+                    throw new TRPCError({
+                        code: 'INTERNAL_SERVER_ERROR',
+                        message: 'database connection timeout'
+                    })
+                }
+                else if (error instanceof TRPCError) {
+                    console.error(error.message);
+                    throw new TRPCError({
+                        code: "INTERNAL_SERVER_ERROR",
+                        message: error.message,
+                    });
+                }
+
                 console.error(error);
                 throw new TRPCError({
                     code: "INTERNAL_SERVER_ERROR",

@@ -272,10 +272,10 @@ model LisitingCritera {
     Institute                 Institute[]
 }
 
-// * cost estimation 
 model Category {
     categoryId    String        @id @default(cuid())
     categoryName  String        @unique
+    rank          Int           @default(100)
     subcategories SubCategory[]
 }
 
@@ -346,6 +346,7 @@ model GIReport {
 model CraftSection {
     craftsectionId  String            @id @default(cuid())
     sectionName     String            @default("none")
+    rank            Int               @default(100)
     subCategoryId   String
     subCategory     SubCategory       @relation(fields: [subCategoryId], references: [subcategoryId], onDelete: Cascade, onUpdate: Cascade)
     CraftSubSection CraftSubSection[]
@@ -354,6 +355,7 @@ model CraftSection {
 model CraftSubSection {
     craftsubsectionId String         @id @default(cuid())
     sectionName       String         @default("none")
+    rank              Int            @default(100)
     sectionId         String
     section           CraftSection   @relation(fields: [sectionId], references: [craftsectionId], onDelete: Cascade, onUpdate: Cascade)
     CraftContent      CraftContent[]

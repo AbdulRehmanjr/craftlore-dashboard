@@ -25,17 +25,20 @@ import { Input } from "~/components/ui/input";
 
 const formSchema = z.object({
   categoryName: z.string().min(1, { message: "Category name is required" }),
+  rank: z.number(),
 });
 
 type FormData = z.infer<typeof formSchema>;
 type ComponentProps = {
   categoryId: string;
   initialCategoryName: string;
+  rank:number
 };
 
 export const EditCategoryForm = ({
   categoryId,
   initialCategoryName,
+  rank
 }: ComponentProps) => {
   const utils = api.useUtils();
   const { toast } = useToast();
@@ -44,6 +47,7 @@ export const EditCategoryForm = ({
     resolver: zodResolver(formSchema),
     defaultValues: {
       categoryName: initialCategoryName,
+      rank:rank
     },
   });
 
@@ -68,6 +72,7 @@ export const EditCategoryForm = ({
     editCategory.mutate({
       categoryId,
       categoryName: data.categoryName,
+      rank:data.rank
     });
   };
 
@@ -96,6 +101,34 @@ export const EditCategoryForm = ({
                       placeholder="Enter the new category name"
                       {...field}
                       value={field.value ?? ""}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="rank"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Category rank</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter the category rank"
+                      {...field}
+                      value={field.value ?? ""}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        if (
+                          value === "" ||
+                          (/^\d+$/.test(value) && parseInt(value) > 0)
+                        ) {
+                          field.onChange(
+                            value === "" ? undefined : parseInt(value),
+                          );
+                        }
+                      }}
                     />
                   </FormControl>
                   <FormMessage />

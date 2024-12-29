@@ -66,6 +66,7 @@ type InstituteProps = {
 type CategoryProps = {
     categoryId: string
     categoryName: string
+    rank : number
 }
 
 type SubCategoryProps = {

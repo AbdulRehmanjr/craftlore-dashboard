@@ -25,11 +25,16 @@ import { Input } from "~/components/ui/input";
 
 const formSchema = z.object({
   sectionName: z.string(),
+  rank: z.number(),
 });
 
 type FormData = z.infer<typeof formSchema>;
 
-export const ProfileSubSectionCreation = ({ sectionId }: { sectionId: string }) => {
+export const ProfileSubSectionCreation = ({
+  sectionId,
+}: {
+  sectionId: string;
+}) => {
   const utils = api.useUtils();
   const { toast } = useToast();
   const form = useForm<FormData>({
@@ -57,13 +62,14 @@ export const ProfileSubSectionCreation = ({ sectionId }: { sectionId: string }) 
     createSubSection.mutate({
       sectionId: sectionId,
       sectionName: data.sectionName,
+      rank: data.rank,
     });
   };
 
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="flex items-center gap-1 w-fit" variant="outline">
+        <Button className="flex w-fit items-center gap-1" variant="outline">
           <PlusIcon />
           <span>Add sub section</span>
         </Button>
@@ -86,6 +92,34 @@ export const ProfileSubSectionCreation = ({ sectionId }: { sectionId: string }) 
                       placeholder="Enter the section name"
                       {...field}
                       value={field.value ?? ""}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="rank"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Section rank</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter the section rank"
+                      {...field}
+                      value={field.value ?? ""}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        if (
+                          value === "" ||
+                          (/^\d+$/.test(value) && parseInt(value) > 0)
+                        ) {
+                          field.onChange(
+                            value === "" ? undefined : parseInt(value),
+                          );
+                        }
+                      }}
                     />
                   </FormControl>
                   <FormMessage />
