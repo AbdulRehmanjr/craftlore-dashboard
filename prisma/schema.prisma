@@ -350,6 +350,7 @@ model CraftSection {
     subCategoryId   String
     subCategory     SubCategory       @relation(fields: [subCategoryId], references: [subcategoryId], onDelete: Cascade, onUpdate: Cascade)
     CraftSubSection CraftSubSection[]
+    CraftQuiz       CraftQuiz[]
 }
 
 model CraftSubSection {
@@ -366,6 +367,18 @@ model CraftContent {
     content           String          @default("none")
     subsectionId      String
     subSection        CraftSubSection @relation(fields: [subsectionId], references: [craftsubsectionId], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model CraftQuiz {
+    quizId    String       @id @default(cuid())
+    question  String       @default("none")
+    option1   String       @default("none")
+    option2   String       @default("none")
+    option3   String       @default("none")
+    option4   String       @default("none")
+    answer    String       @default("none")
+    sectionId String
+    section   CraftSection @relation(fields: [sectionId], references: [craftsectionId], onDelete: Cascade, onUpdate: Cascade)
 }
 
 enum SectionType {
