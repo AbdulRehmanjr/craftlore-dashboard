@@ -346,4 +346,60 @@ export const craftRouter = createTRPCRouter({
             }
         }),
 
+    getSectionQuestions: protectedProcedure
+        .input(z.object({
+            sectionId: z.string(),
+        }))
+        .query(async ({ ctx, input }) => {
+            return await ctx.db.craftQuiz.findMany({
+                where: {
+                    sectionId: input.sectionId,
+                }
+            });
+        }),
+
+        createQuestion: protectedProcedure
+        .input(z.object({
+          question: z.string(),
+          option1: z.string(),
+          option2: z.string(),
+          option3: z.string(),
+          option4: z.string(),
+          answer: z.string(),
+          sectionId: z.string(),
+        }))
+        .mutation(async ({ ctx, input }) => {
+          return await ctx.db.craftQuiz.create({
+            data: input,
+          });
+        }),
+      
+      updateQuestion: protectedProcedure
+        .input(z.object({
+          quizId: z.string(),
+          question: z.string(),
+          option1: z.string(),
+          option2: z.string(),
+          option3: z.string(),
+          option4: z.string(),
+          answer: z.string(),
+          sectionId: z.string(),
+        }))
+        .mutation(async ({ ctx, input }) => {
+          const { quizId, ...rest } = input;
+          return await ctx.db.craftQuiz.update({
+            where: { quizId },
+            data: rest,
+          });
+        }),
+      
+      deleteQuestion: protectedProcedure
+        .input(z.object({
+          quizId: z.string(),
+        }))
+        .mutation(async ({ ctx, input }) => {
+          return await ctx.db.craftQuiz.delete({
+            where: { quizId: input.quizId },
+          });
+        }),
 });

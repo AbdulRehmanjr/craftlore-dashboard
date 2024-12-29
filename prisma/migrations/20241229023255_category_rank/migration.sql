@@ -1,2 +1,0 @@
--- AlterTable
-ALTER TABLE "Category" ADD COLUMN     "rank" INTEGER NOT NULL DEFAULT 100;
