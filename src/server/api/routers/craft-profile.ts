@@ -360,13 +360,13 @@ export const craftRouter = createTRPCRouter({
 
     createPictures: protectedProcedure
         .input(z.object({
-            images: z.string().array(),
+            image: z.string(),
             subId: z.string()
         }))
         .mutation(async ({ ctx, input }) => {
             return await ctx.db.craftPicture.create({
                 data: {
-                    pictures: input.images,
+                    picture: input.image,
                     subcategroryId: input.subId
                 },
             });

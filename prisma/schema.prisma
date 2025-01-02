@@ -342,7 +342,7 @@ model CraftQuiz {
 
 model CraftPicture {
     pictureId      String      @id @default(cuid())
-    pictures       String[]    @default([])
+    picture        String      @default("none")
     subcategroryId String
     subCategory    SubCategory @relation(fields: [subcategroryId], references: [subcategoryId], onDelete: Cascade, onUpdate: Cascade)
 }
