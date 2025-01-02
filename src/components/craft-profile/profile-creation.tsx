@@ -9,6 +9,7 @@ import {
 import { ProfileSectionCreation } from "~/components/craft-profile/section/section-creation";
 import { ProfileSectionList } from "~/components/craft-profile/section-list";
 import { PenLine, ListChecks } from "lucide-react";
+import { ProfilePicture } from './picture/profile-pictures';
 
 type ComponentProps = {
   subId: string;
@@ -30,6 +31,7 @@ export const ProfileCreation = ({ subId }: ComponentProps) => {
           </div>
         </CardHeader>
         <CardContent className="p-6 space-y-6">
+          
           {/* Creation Section */}
           <Card className="border-2 border-dashed">
             <CardHeader className="pb-3">
@@ -47,6 +49,9 @@ export const ProfileCreation = ({ subId }: ComponentProps) => {
               <ProfileSectionCreation subId={subId} />
             </CardContent>
           </Card>
+
+          {/* Picture Section */}
+          <ProfilePicture subId={subId}/>
 
           {/* List Section */}
           <Card>

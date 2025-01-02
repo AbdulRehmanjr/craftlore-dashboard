@@ -358,48 +358,97 @@ export const craftRouter = createTRPCRouter({
             });
         }),
 
-        createQuestion: protectedProcedure
+    createPictures: protectedProcedure
         .input(z.object({
-          question: z.string(),
-          option1: z.string(),
-          option2: z.string(),
-          option3: z.string(),
-          option4: z.string(),
-          answer: z.string(),
-          sectionId: z.string(),
+            images: z.string().array(),
+            subId: z.string()
         }))
         .mutation(async ({ ctx, input }) => {
-          return await ctx.db.craftQuiz.create({
-            data: input,
-          });
+            return await ctx.db.craftPicture.create({
+                data: {
+                    pictures: input.images,
+                    subcategroryId: input.subId
+                },
+            });
         }),
-      
-      updateQuestion: protectedProcedure
-        .input(z.object({
-          quizId: z.string(),
-          question: z.string(),
-          option1: z.string(),
-          option2: z.string(),
-          option3: z.string(),
-          option4: z.string(),
-          answer: z.string(),
-          sectionId: z.string(),
-        }))
-        .mutation(async ({ ctx, input }) => {
-          const { quizId, ...rest } = input;
-          return await ctx.db.craftQuiz.update({
-            where: { quizId },
-            data: rest,
-          });
+
+    getPictures: protectedProcedure
+        .input(z.object({ subId: z.string() }))
+        .query(async ({ ctx, input }) => {
+            try {
+                const data = await ctx.db.craftPicture.findMany({
+                    where: {
+                      subcategroryId: input.subId
+                    }
+                  });
+                  
+                  return data
+            } catch (error) {
+                if (error instanceof TRPCError) {
+                    console.error(error.message);
+                    throw new TRPCError({
+                        code: error.code,
+                        message: error.message,
+                    });
+                }
+                else if (error instanceof TRPCClientError) {
+                    console.error(error.message)
+                    throw new TRPCError({
+                        code: 'INTERNAL_SERVER_ERROR',
+                        message: 'database connection timeout'
+                    })
+                }
+                console.error(error);
+                throw new TRPCError({
+                    code: "INTERNAL_SERVER_ERROR",
+                    message: "Something went wrong.",
+                });
+            }
+
         }),
-      
-      deleteQuestion: protectedProcedure
+
+    createQuestion: protectedProcedure
         .input(z.object({
-          quizId: z.string(),
+            question: z.string(),
+            option1: z.string(),
+            option2: z.string(),
+            option3: z.string(),
+            option4: z.string(),
+            answer: z.string(),
+            sectionId: z.string(),
         }))
         .mutation(async ({ ctx, input }) => {
-          return await ctx.db.craftQuiz.delete({
-            where: { quizId: input.quizId },
-          });
+            return await ctx.db.craftQuiz.create({
+                data: input,
+            });
+        }),
+
+    updateQuestion: protectedProcedure
+        .input(z.object({
+            quizId: z.string(),
+            question: z.string(),
+            option1: z.string(),
+            option2: z.string(),
+            option3: z.string(),
+            option4: z.string(),
+            answer: z.string(),
+            sectionId: z.string(),
+        }))
+        .mutation(async ({ ctx, input }) => {
+            const { quizId, ...rest } = input;
+            return await ctx.db.craftQuiz.update({
+                where: { quizId },
+                data: rest,
+            });
+        }),
+
+    deleteQuestion: protectedProcedure
+        .input(z.object({
+            quizId: z.string(),
+        }))
+        .mutation(async ({ ctx, input }) => {
+            return await ctx.db.craftQuiz.delete({
+                where: { quizId: input.quizId },
+            });
         }),
 });

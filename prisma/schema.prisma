@@ -9,13 +9,12 @@ datasource db {
 
 model Account {
     accountId String   @id @default(cuid())
-    email     String
+    email     String   @unique
     password  String
     role      Role     @default(ADMIN)
     createdAt DateTime @default(now())
     udpatedAt DateTime @updatedAt
 
-    @@unique([email])
     @@index([email])
 }
 
@@ -40,19 +39,18 @@ model User {
     userId            String              @id @default(cuid())
     fullName          String              @default("none")
     phone             String              @default("none")
-    email             String
+    email             String              @unique
     address           String              @default("none")
     password          String              @default("none")
     registerType      RegisterType        @default(None)
     status            Status              @default(Pending)
     Artisan           Artisan[]
     Business          Business[]
-    Institute         Institute[]
     BuyerMembership   BuyerMembership[]
     CorpoMembership   CorpoMembership[]
+    Institute         Institute[]
     SponsorMembership SponsorMembership[]
 
-    @@unique([email])
     @@index([email])
 }
 
@@ -67,14 +65,14 @@ model Artisan {
     status          String          @default("active")
     userId          String
     listingCriteria String
-    criteria        LisitingCritera @relation(fields: [listingCriteria], references: [criteraId], onDelete: Cascade, onUpdate: Cascade)
-    user            User            @relation(fields: [userId], references: [userId], onDelete: Cascade, onUpdate: Cascade)
+    criteria        LisitingCritera @relation(fields: [listingCriteria], references: [criteraId], onDelete: Cascade)
+    user            User            @relation(fields: [userId], references: [userId], onDelete: Cascade)
 }
 
 model Business {
     businessId       String          @id @default(cuid())
     businessName     String          @default("none")
-    businessEmail    String
+    businessEmail    String          @unique
     businessAddress  String          @default("none")
     businessType     BusinessLevel   @default(None)
     businessSold     String          @default("none")
@@ -82,18 +80,19 @@ model Business {
     documents        String[]        @default([])
     status           String          @default("active")
     listingCriteria  String
-    criteria         LisitingCritera @relation(fields: [listingCriteria], references: [criteraId], onDelete: Cascade, onUpdate: Cascade)
     userId           String
-    user             User            @relation(fields: [userId], references: [userId], onDelete: Cascade, onUpdate: Cascade)
+    businessMarket   MarketType      @default(None)
+    yearOfOperation  Int             @default(1)
+    criteria         LisitingCritera @relation(fields: [listingCriteria], references: [criteraId], onDelete: Cascade)
+    user             User            @relation(fields: [userId], references: [userId], onDelete: Cascade)
 
-    @@unique([businessEmail])
     @@index([businessEmail])
 }
 
 model Institute {
     instituteId      String          @id @default(cuid())
     instituteName    String          @default("none")
-    instituteEmail   String
+    instituteEmail   String          @unique
     instituteType    InstitutionType @default(None)
     instituteAddress String          @default("none")
     instituteMission String          @default("none")
@@ -102,11 +101,10 @@ model Institute {
     documents        String[]        @default([])
     status           String          @default("active")
     listingCriteria  String
-    criteria         LisitingCritera @relation(fields: [listingCriteria], references: [criteraId], onDelete: Cascade, onUpdate: Cascade)
     userId           String
-    user             User            @relation(fields: [userId], references: [userId], onDelete: Cascade, onUpdate: Cascade)
+    criteria         LisitingCritera @relation(fields: [listingCriteria], references: [criteraId], onDelete: Cascade)
+    user             User            @relation(fields: [userId], references: [userId], onDelete: Cascade)
 
-    @@unique([instituteEmail])
     @@index([instituteEmail])
 }
 
@@ -128,119 +126,79 @@ model BuyerMembership {
     specialRequirements String   @default("none")
     terms               Boolean  @default(false)
     userId              String
-    user                User     @relation(fields: [userId], references: [userId], onUpdate: Cascade, onDelete: Cascade)
     createdAt           DateTime @default(now())
     updatedAt           DateTime @updatedAt
+    user                User     @relation(fields: [userId], references: [userId], onDelete: Cascade)
 }
 
 model CorpoMembership {
-    corpoMemberId String @id @default(cuid())
-
-    // Institution Information
-    institutionName String @default("none")
-    institutionType String @default("none")
-    industry        String @default("none")
-    yearEstablished Int    @default(0000)
-    taxId           String @default("none")
-    primaryContact  String @default("none")
-    contactEmail    String @default("none")
-    contactPhone    String @default("none")
-    website         String @default("none")
-
-    // Business Address
-    headquartersAddress String @default("none")
-    additionalLocations String @default("none")
-
-    // Partnership Interest
-    partnershipType  String   @default("none")
-    partnershipGoals String   @default("none")
-    targetProducts   String[] @default([])
-
-    // CSR and Sustainability
-    csrInterest             String @default("No")
-    csrInitiatives          String @default("none")
-    sustainabilityPractices String @default("none")
-
-    // Verification and Documentation
-    businessLicense String @default("none")
-    proofOfTaxID    String @default("none")
-    references      String @default("none")
-
-    // Marketing and Engagement
-    engagementChannels  String @default("none")
-    customerDemographic String @default("none")
-    brandMission        String @default("none")
-
-    // Additional Information
-    specificRequirements String @default("none")
-    challenges           String @default("none")
-    additionalComments   String @default("none")
-
-    // Terms & Conditions
-    terms Boolean @default(false)
-
-    userId String
-    user   User   @relation(fields: [userId], references: [userId], onUpdate: Cascade, onDelete: Cascade)
-
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    corpoMemberId           String   @id @default(cuid())
+    institutionName         String   @default("none")
+    institutionType         String   @default("none")
+    industry                String   @default("none")
+    yearEstablished         Int      @default(0)
+    taxId                   String   @default("none")
+    primaryContact          String   @default("none")
+    contactEmail            String   @default("none")
+    contactPhone            String   @default("none")
+    website                 String   @default("none")
+    headquartersAddress     String   @default("none")
+    additionalLocations     String   @default("none")
+    partnershipType         String   @default("none")
+    partnershipGoals        String   @default("none")
+    targetProducts          String[] @default([])
+    csrInterest             String   @default("No")
+    csrInitiatives          String   @default("none")
+    sustainabilityPractices String   @default("none")
+    businessLicense         String   @default("none")
+    proofOfTaxID            String   @default("none")
+    references              String   @default("none")
+    engagementChannels      String   @default("none")
+    customerDemographic     String   @default("none")
+    brandMission            String   @default("none")
+    specificRequirements    String   @default("none")
+    challenges              String   @default("none")
+    additionalComments      String   @default("none")
+    terms                   Boolean  @default(false)
+    userId                  String
+    createdAt               DateTime @default(now())
+    updatedAt               DateTime @updatedAt
+    user                    User     @relation(fields: [userId], references: [userId], onDelete: Cascade)
 }
 
 model SponsorMembership {
-    sponsorshipId String @id @default(cuid())
-
-    // Sponsor Information
-    sponsorName   String @default("none")
-    contactPerson String @default("none")
-    email         String @unique
-    phone         String @default("none")
-    socialLinks   String @default("none")
-
-    // Sponsor Type
-    sponsorType String @default("none")
-    industry    String @default("none")
-
-    // Sponsorship Goals and Interests
-    sponsorshipGoal String @default("none")
-    objectives      String @default("none")
-    focusArea       String @default("none")
-
-    // Sponsorship Tier
-    tier        String @default("none")
-    budgetRange String @default("none")
-
-    // Sponsorship Options
-    sponsorshipChannel   String @default("none")
-    eventInterest        String @default("No")
-    productCustomization String @default("none")
-
-    // CSR and Sustainability
-    csrInterest             String @default("No")
-    pastCSREfforts          String @default("none")
-    sustainabilityPractices String @default("none")
-
-    // Marketing and Branding Preferences
-    brandingOptions      String[] @default([])
-    socialHandles        String   @default("none")
-    communicationChannel String   @default("none")
-
-    // Impact and Reporting Requirements
-    impactMetrics   String[] @default([])
-    reportFrequency String   @default("none")
-    publicUse       String   @default("No")
-
-    // Additional Information
-    specialRequirements String @default("none")
-    additionalComments  String @default("none")
-
-    // Terms and Conditions
-    terms Boolean @default(false)
-
-    userId String
-    user   User   @relation(fields: [userId], references: [userId], onUpdate: Cascade, onDelete: Cascade)
-
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    sponsorshipId           String   @id @default(cuid())
+    sponsorName             String   @default("none")
+    contactPerson           String   @default("none")
+    email                   String   @unique
+    phone                   String   @default("none")
+    socialLinks             String   @default("none")
+    sponsorType             String   @default("none")
+    industry                String   @default("none")
+    sponsorshipGoal         String   @default("none")
+    objectives              String   @default("none")
+    focusArea               String   @default("none")
+    tier                    String   @default("none")
+    budgetRange             String   @default("none")
+    sponsorshipChannel      String   @default("none")
+    eventInterest           String   @default("No")
+    productCustomization    String   @default("none")
+    csrInterest             String   @default("No")
+    pastCSREfforts          String   @default("none")
+    sustainabilityPractices String   @default("none")
+    brandingOptions         String[] @default([])
+    socialHandles           String   @default("none")
+    communicationChannel    String   @default("none")
+    impactMetrics           String[] @default([])
+    reportFrequency         String   @default("none")
+    publicUse               String   @default("No")
+    specialRequirements     String   @default("none")
+    additionalComments      String   @default("none")
+    terms                   Boolean  @default(false)
+    userId                  String
+    createdAt               DateTime @default(now())
+    updatedAt               DateTime @updatedAt
+    user                    User     @relation(fields: [userId], references: [userId], onDelete: Cascade)
 }
 
 model LisitingCritera {
@@ -283,19 +241,20 @@ model SubCategory {
     subcategoryId   String          @id @default(cuid())
     subcategoryName String          @default("none")
     categoryId      String
-    category        Category        @relation(fields: [categoryId], references: [categoryId], onDelete: Cascade, onUpdate: Cascade)
     sections        CarbonSection[]
+    CraftSection    CraftSection[]
     Material        Material[]
     PriceSection    PriceSection[]
-    CraftSection    CraftSection[]
+    category        Category        @relation(fields: [categoryId], references: [categoryId], onDelete: Cascade)
+    CraftPicture    CraftPicture[]
 }
 
 model Material {
     materialId    String        @id @default(cuid())
     materialName  String        @default("none")
     subcategoryId String
-    subcategory   SubCategory   @relation(fields: [subcategoryId], references: [subcategoryId], onDelete: Cascade, onUpdate: Cascade)
     carbonValues  CarbonValue[]
+    subcategory   SubCategory   @relation(fields: [subcategoryId], references: [subcategoryId], onDelete: Cascade)
     PriceValue    PriceValue[]
 }
 
@@ -303,7 +262,7 @@ model CarbonSection {
     carbonsectionId String        @id @default(cuid())
     sectionType     SectionType   @default(None)
     subCategoryId   String
-    subCategory     SubCategory   @relation(fields: [subCategoryId], references: [subcategoryId], onDelete: Cascade, onUpdate: Cascade)
+    subCategory     SubCategory   @relation(fields: [subCategoryId], references: [subcategoryId], onDelete: Cascade)
     values          CarbonValue[]
 }
 
@@ -311,7 +270,7 @@ model PriceSection {
     priceSectionId String       @id @default(cuid())
     sectionType    SectionType  @default(None)
     subCategoryId  String
-    subCategory    SubCategory  @relation(fields: [subCategoryId], references: [subcategoryId], onDelete: Cascade, onUpdate: Cascade)
+    subCategory    SubCategory  @relation(fields: [subCategoryId], references: [subcategoryId], onDelete: Cascade)
     values         PriceValue[]
 }
 
@@ -319,20 +278,20 @@ model CarbonValue {
     valueId         String        @id @default(cuid())
     name            String        @default("none")
     value           String        @default("0-0")
-    carbonsectionId String
     materialId      String
-    carbonSection   CarbonSection @relation(fields: [carbonsectionId], references: [carbonsectionId], onDelete: Cascade, onUpdate: Cascade)
-    material        Material      @relation(fields: [materialId], references: [materialId], onDelete: Cascade, onUpdate: Cascade)
+    carbonsectionId String
+    carbonSection   CarbonSection @relation(fields: [carbonsectionId], references: [carbonsectionId], onDelete: Cascade)
+    material        Material      @relation(fields: [materialId], references: [materialId], onDelete: Cascade)
 }
 
 model PriceValue {
     valueId        String       @id @default(cuid())
     name           String       @default("none")
-    value          Int          @default(0)
     priceSectionId String
     materialId     String
-    priceSection   PriceSection @relation(fields: [priceSectionId], references: [priceSectionId], onDelete: Cascade, onUpdate: Cascade)
-    material       Material     @relation(fields: [materialId], references: [materialId], onDelete: Cascade, onUpdate: Cascade)
+    value          Int          @default(0)
+    material       Material     @relation(fields: [materialId], references: [materialId], onDelete: Cascade)
+    priceSection   PriceSection @relation(fields: [priceSectionId], references: [priceSectionId], onDelete: Cascade)
 }
 
 model GIReport {
@@ -346,27 +305,27 @@ model GIReport {
 model CraftSection {
     craftsectionId  String            @id @default(cuid())
     sectionName     String            @default("none")
-    rank            Int               @default(100)
     subCategoryId   String
-    subCategory     SubCategory       @relation(fields: [subCategoryId], references: [subcategoryId], onDelete: Cascade, onUpdate: Cascade)
-    CraftSubSection CraftSubSection[]
+    rank            Int               @default(100)
     CraftQuiz       CraftQuiz[]
+    subCategory     SubCategory       @relation(fields: [subCategoryId], references: [subcategoryId], onDelete: Cascade)
+    CraftSubSection CraftSubSection[]
 }
 
 model CraftSubSection {
     craftsubsectionId String         @id @default(cuid())
     sectionName       String         @default("none")
-    rank              Int            @default(100)
     sectionId         String
-    section           CraftSection   @relation(fields: [sectionId], references: [craftsectionId], onDelete: Cascade, onUpdate: Cascade)
+    rank              Int            @default(100)
     CraftContent      CraftContent[]
+    section           CraftSection   @relation(fields: [sectionId], references: [craftsectionId], onDelete: Cascade)
 }
 
 model CraftContent {
     craftsubsectionId String          @id @default(cuid())
     content           String          @default("none")
     subsectionId      String
-    subSection        CraftSubSection @relation(fields: [subsectionId], references: [craftsubsectionId], onDelete: Cascade, onUpdate: Cascade)
+    subSection        CraftSubSection @relation(fields: [subsectionId], references: [craftsubsectionId], onDelete: Cascade)
 }
 
 model CraftQuiz {
@@ -378,13 +337,33 @@ model CraftQuiz {
     option4   String       @default("none")
     answer    String       @default("none")
     sectionId String
-    section   CraftSection @relation(fields: [sectionId], references: [craftsectionId], onDelete: Cascade, onUpdate: Cascade)
+    section   CraftSection @relation(fields: [sectionId], references: [craftsectionId], onDelete: Cascade)
+}
+
+model CraftPicture {
+    pictureId      String      @id @default(cuid())
+    pictures       String[]    @default([])
+    subcategroryId String
+    subCategory    SubCategory @relation(fields: [subcategroryId], references: [subcategoryId], onDelete: Cascade, onUpdate: Cascade)
 }
 
 enum SectionType {
     None
-    MaterialType
     Quality
+    ProductLine
+    RawMaterial
+    Processing
+    ProductionMethod
+    Packaging
+    Transportation
+    Crafting
+    Installation
+    Finishing
+    Preparation
+    CookingProcess
+    PaintingAndLacquering
+    Embroidery
+    MaterialType
     ProductionProcess
     ProductCertifications
     PlyType
@@ -405,19 +384,6 @@ enum SectionType {
     FinishOptions
     PatternTypes
     FabricAndMaterial
-    RawMaterial
-    Processing
-    Packaging
-    Transportation
-    Crafting
-    Installation
-    Finishing
-    Preparation
-    CookingProcess
-    PaintingAndLacquering
-    Embroidery
-    ProductLine
-    ProductionMethod
 }
 
 enum Role {
