@@ -22,6 +22,11 @@ const columns: ColumnDef<EmployeeProps>[] = [
         cell: ({ row }) => <div>{row.getValue("fullName")}</div>,
     },
     {
+        accessorKey: "organization",
+        header: "Deputy Org",
+        cell: ({ row }) => <div>{row.getValue("organization")}</div>,
+    },
+    {
         accessorKey: "skills",
         header: "Skills",
         cell: ({ row }) => <div>{row.getValue("skills")}</div>,

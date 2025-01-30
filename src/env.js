@@ -20,11 +20,6 @@ export const env = createEnv({
   client: {
     NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: z.string(),
   },
-
-  /**
-   * You can't destruct `process.env` as a regular object in the Next.js edge runtimes (e.g.
-   * middlewares) or client-side so we need to destruct manually.
-   */
   runtimeEnv: {
     AUTH_SECRET: process.env.AUTH_SECRET,
     AUTH_URL:process.env.AUTH_URL,
@@ -35,14 +30,7 @@ export const env = createEnv({
     CLOUD_SECERT: process.env.CLOUD_SECERT,
     NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME:process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
   },
-  /**
-   * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
-   * useful for Docker builds.
-   */
+
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
-  /**
-   * Makes it so that empty strings are treated as undefined. `SOME_VAR: z.string()` and
-   * `SOME_VAR=''` will throw an error.
-   */
   emptyStringAsUndefined: true,
 });

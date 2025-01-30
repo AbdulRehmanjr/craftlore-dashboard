@@ -27,6 +27,7 @@ import { RefreshCcw } from "lucide-react";
 
 const formSchema = z.object({
   fullName: z.string({ required_error: "Field is required" }),
+  organization :  z.string({ required_error: "Field is required" }),
   skills: z.string({ required_error: "Field is required" }),
   contribution: z.string({ required_error: "Field is required" }),
 });
@@ -61,6 +62,7 @@ export const CreateEmployeeForm = () => {
       fullName: data.fullName,
       skills: data.skills,
       contribution: data.contribution,
+      organization: data.organization
     });
   };
 
@@ -88,6 +90,23 @@ export const CreateEmployeeForm = () => {
                     <FormControl>
                       <Input
                         placeholder="Enter the employee name"
+                        {...field}
+                        value={field.value ?? ""}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="organization"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Organization</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Enter the organization name"
                         {...field}
                         value={field.value ?? ""}
                       />

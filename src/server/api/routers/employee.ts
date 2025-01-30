@@ -64,14 +64,20 @@ export const employRouter = createTRPCRouter({
         }),
 
     createEmployee: protectedProcedure
-        .input(z.object({ fullName: z.string(), skills: z.string(), contribution: z.string() }))
+        .input(z.object({
+            fullName: z.string(),
+            skills: z.string(),
+            contribution: z.string(),
+            organization: z.string()
+        }))
         .mutation(async ({ ctx, input }) => {
             try {
                 await ctx.db.employ.create({
                     data: {
                         fullName: input.fullName,
                         skills: input.skills,
-                        contribution: input.contribution
+                        contribution: input.contribution,
+                        organization: input.organization
                     }
                 })
             } catch (error) {
@@ -91,7 +97,13 @@ export const employRouter = createTRPCRouter({
         }),
 
     updateEmployee: protectedProcedure
-        .input(z.object({ employeeId: z.string(), fullName: z.string(), skills: z.string(), contribution: z.string() }))
+        .input(z.object({
+            employeeId: z.string(),
+            fullName: z.string(),
+            skills: z.string(),
+            contribution: z.string(),
+            organization:z.string()
+        }))
         .mutation(async ({ ctx, input }) => {
             try {
                 await ctx.db.employ.update({
@@ -99,7 +111,8 @@ export const employRouter = createTRPCRouter({
                     data: {
                         fullName: input.fullName,
                         skills: input.skills,
-                        contribution: input.contribution
+                        contribution: input.contribution,
+                        organization:input.organization
                     }
                 })
             } catch (error) {
