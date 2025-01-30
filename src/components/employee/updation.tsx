@@ -30,6 +30,7 @@ const formSchema = z.object({
   fullName: z.string({ required_error: "Field is required" }),
   skills: z.string({ required_error: "Field is required" }),
   contribution: z.string({ required_error: "Field is required" }),
+  organization: z.string({ required_error: "Field is requied." }),
 });
 
 export const UpdateEmployeeForm = ({ employeeId }: { employeeId: string }) => {
@@ -63,6 +64,7 @@ export const UpdateEmployeeForm = ({ employeeId }: { employeeId: string }) => {
     form.setValue("fullName", employeeData.fullName);
     form.setValue("skills", employeeData.skills);
     form.setValue("contribution", employeeData.contribution);
+    form.setValue("organization", employeeData.organization);
   }, [form, employeeData]);
 
   const formSubmitted = (data: z.infer<typeof formSchema>) => {
@@ -71,6 +73,7 @@ export const UpdateEmployeeForm = ({ employeeId }: { employeeId: string }) => {
       fullName: data.fullName,
       skills: data.skills,
       contribution: data.contribution,
+      organization:data.organization
     });
   };
 
@@ -106,6 +109,24 @@ export const UpdateEmployeeForm = ({ employeeId }: { employeeId: string }) => {
                   </FormItem>
                 )}
               />
+              <FormField
+                control={form.control}
+                name="organization"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Organization</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Enter the organization name"
+                        {...field}
+                        value={field.value ?? ""}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               <FormField
                 control={form.control}
                 name="skills"

@@ -44,7 +44,7 @@ export const LoginForm = () => {
             setSubmitting(false);
         }
     };
-
+    
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 [&_label]:font-heading [&_label]:text-primary">

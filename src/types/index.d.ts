@@ -1,4 +1,4 @@
-type RoleProps = 'ADMIN' | 'SUPERADMIN'
+type RoleProps = 'ADMIN' | 'SUPERADMIN' | 'API'
 
 type AccountProps = {
     email: string;
@@ -15,6 +15,7 @@ type EmployeeProps = {
     fullName: string;
     skills: string;
     contribution: string;
+    organization:string
 }
 
 type ArtisanProps = {
