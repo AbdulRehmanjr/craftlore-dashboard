@@ -23,14 +23,16 @@ import {
   TableHeader,
   TableRow,
 } from "~/components/ui/table";
-import { UpdateUserDialog } from "~/components/listing/update-user";
+import { UpdateUserDialog } from "~/components/listing/dialogs/update-user";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
+import { DeleteArtisanDialog } from "./dialogs/delete-artisan";
 
 const columns: ColumnDef<ArtisanProps>[] = [
   {
@@ -68,6 +70,11 @@ const columns: ColumnDef<ArtisanProps>[] = [
     cell: ({ row }) => <div>{row.getValue("market")}</div>,
   },
   {
+    accessorKey: "craftAward",
+    header: "Award",
+    cell: ({ row }) => <div>{row.getValue("craftAward")}</div>,
+  },
+  {
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => {
@@ -89,6 +96,10 @@ const columns: ColumnDef<ArtisanProps>[] = [
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem asChild>
               <UpdateUserDialog userId={row.original.userId} dialog="artisan" />
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild>
+              <DeleteArtisanDialog artisanId={row.original.artisanId} />
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

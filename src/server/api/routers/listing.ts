@@ -443,7 +443,7 @@ export const lisitingRouter = createTRPCRouter({
             instituteName: z.string().optional(),
             instituteType: z.enum(["Governance", "NGO", "Training_Body", "Educational_Body"]).optional(),
             instituteMission: z.string().optional(),
-            instituteAddress:z.string().optional()
+            instituteAddress: z.string().optional()
         }))
         .mutation(async ({ ctx, input }) => {
             try {
@@ -495,7 +495,7 @@ export const lisitingRouter = createTRPCRouter({
                             craftSpecialty: input.craftSpecialty ?? "General Crafts",
                             craftSkill: input.craftSkill as SkillLevel,
                             craftExperience: input.craftExperience ?? 0,
-                            craftAward: "none",
+                            craftAward: input.award,
                             market: input.market as MarketType,
                             documents: [],
                             listingCriteria: listingCriteria.criteraId,
@@ -545,11 +545,134 @@ export const lisitingRouter = createTRPCRouter({
                 };
 
             } catch (error) {
-                console.error("Error:", error);
+                if (error instanceof TRPCError) {
+                    console.error(error.message);
+                    throw new TRPCError({
+                        code: "INTERNAL_SERVER_ERROR",
+                        message: error.message,
+                    });
+                }
+
+                console.error(error);
                 throw new TRPCError({
                     code: "INTERNAL_SERVER_ERROR",
-                    message: "Failed to create listing"
+                    message: "Something went wrong.",
                 });
             }
-        })
+        }),
+
+    deleteArtisan: protectedProcedure
+        .input(z.object({ artisanId: z.string() }))
+        .mutation(async ({ ctx, input }) => {
+            try {
+                // First, delete the artisan record
+                await ctx.db.artisan.deleteMany({
+                    where: {
+                        artisanId: input.artisanId,
+                    },
+                });
+
+                // Then, delete the associated user record
+                await ctx.db.user.deleteMany({
+                    where: {
+                        Artisan: {
+                            some: {
+                                artisanId: input.artisanId
+                            }
+                        }
+                    },
+                });
+
+            } catch (error) {
+                if (error instanceof TRPCError) {
+                    console.error(error.message);
+                    throw new TRPCError({
+                        code: "INTERNAL_SERVER_ERROR",
+                        message: error.message,
+                    });
+                }
+
+                console.error(error);
+                throw new TRPCError({
+                    code: "INTERNAL_SERVER_ERROR",
+                    message: "Something went wrong.",
+                });
+            }
+        }),
+
+    deleteBusiness: protectedProcedure
+        .input(z.object({ businessId: z.string() }))
+        .mutation(async ({ ctx, input }) => {
+            try {
+                // First, delete the artisan record
+                await ctx.db.business.deleteMany({
+                    where: {
+                        businessId: input.businessId,
+                    },
+                });
+
+                // Then, delete the associated user record
+                await ctx.db.user.deleteMany({
+                    where: {
+                        Business: {
+                            some: {
+                                businessId: input.businessId
+                            }
+                        }
+                    },
+                });
+
+            } catch (error) {
+                if (error instanceof TRPCError) {
+                    console.error(error.message);
+                    throw new TRPCError({
+                        code: "INTERNAL_SERVER_ERROR",
+                        message: error.message,
+                    });
+                }
+
+                console.error(error);
+                throw new TRPCError({
+                    code: "INTERNAL_SERVER_ERROR",
+                    message: "Something went wrong.",
+                });
+            }
+        }),
+    deleteInstitute: protectedProcedure
+        .input(z.object({ instituteId: z.string() }))
+        .mutation(async ({ ctx, input }) => {
+            try {
+                // First, delete the artisan record
+                await ctx.db.institute.deleteMany({
+                    where: {
+                        instituteId: input.instituteId,
+                    },
+                });
+
+                // Then, delete the associated user record
+                await ctx.db.user.deleteMany({
+                    where: {
+                        Institute: {
+                            some: {
+                                instituteId: input.instituteId
+                            }
+                        }
+                    },
+                });
+            } catch (error) {
+                if (error instanceof TRPCError) {
+                    console.error(error.message);
+                    throw new TRPCError({
+                        code: "INTERNAL_SERVER_ERROR",
+                        message: error.message,
+                    });
+                }
+
+                console.error(error);
+                throw new TRPCError({
+                    code: "INTERNAL_SERVER_ERROR",
+                    message: "Something went wrong.",
+                });
+            }
+        }),
 });
