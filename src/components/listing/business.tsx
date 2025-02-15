@@ -22,14 +22,16 @@ import {
   TableHeader,
   TableRow,
 } from "~/components/ui/table";
-import { UpdateUserDialog } from "~/components/listing/update-user";
+import { UpdateUserDialog } from "~/components/listing/dialogs/update-user";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
+import { DeleteBusinessDialog } from "~/components/listing/dialogs/delete-business";
 
 const columns: ColumnDef<BusinessProps>[] = [
   {
@@ -87,6 +89,10 @@ const columns: ColumnDef<BusinessProps>[] = [
                 userId={row.original.userId}
                 dialog="business"
               />
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild>
+              <DeleteBusinessDialog businessId={row.original.businessId} />
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

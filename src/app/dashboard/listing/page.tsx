@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { ArtisanTable } from "~/components/listing/artisan";
 import { BusinessTable } from "~/components/listing/business";
-import { AddListingDialog } from "~/components/listing/dummy-data";
+import { AddListingDialog } from "~/components/listing/dialogs/dummy-data";
 import { InstituteTable } from "~/components/listing/institute";
 import { TableSkeleton } from "~/components/skeletons/table";
 import {

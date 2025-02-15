@@ -90,7 +90,6 @@ export const AddListingDialog = () => {
         description: "Listing created successfully",
       });
       await utils.listing.getArtisans.refetch();
-
       await utils.listing.getBusinesses.refetch();
       await utils.listing.getInstitutes.refetch();
     },
