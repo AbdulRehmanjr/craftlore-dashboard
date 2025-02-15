@@ -2,11 +2,20 @@
 "use client";
 import { api } from "~/trpc/react";
 import { type ColumnDef, type ColumnFiltersState, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from "@tanstack/react-table";
-import { SearchIcon } from "lucide-react";
+import { MoreHorizontal, SearchIcon } from "lucide-react";
 import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/table";
+import { UpdateUserDialog } from "~/components/listing/update-user";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "~/components/ui/dropdown-menu";
+
 
 const columns: ColumnDef<InstituteProps>[] = [
     {
@@ -51,7 +60,30 @@ const columns: ColumnDef<InstituteProps>[] = [
             return <div>{row.getValue("status")}</div>;
         },
     },
-
+    {
+        id: "actions",
+        cell: ({ row }) => {
+          return (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="h-8 w-8 p-0">
+                  <span className="sr-only">Open menu</span>
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                <DropdownMenuItem asChild>
+                  <UpdateUserDialog
+                    userId={row.original.userId}
+                    dialog="institute"
+                  />
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          );
+        },
+      },
 ];
 
 export const InstituteTable = () => {

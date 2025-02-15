@@ -1,4 +1,5 @@
 "use client";
+
 import { api } from "~/trpc/react";
 import {
   type ColumnDef,
@@ -10,7 +11,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { SearchIcon } from "lucide-react";
+import { MoreHorizontal, SearchIcon } from "lucide-react";
 import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
@@ -22,6 +23,14 @@ import {
   TableHeader,
   TableRow,
 } from "~/components/ui/table";
+import { UpdateUserDialog } from "~/components/listing/update-user";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "~/components/ui/dropdown-menu";
 
 const columns: ColumnDef<ArtisanProps>[] = [
   {
@@ -65,6 +74,27 @@ const columns: ColumnDef<ArtisanProps>[] = [
       return <div>{row.getValue("status")}</div>;
     },
   },
+  {
+    id: "actions",
+    cell: ({ row }) => {
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuItem asChild>
+              <UpdateUserDialog userId={row.original.userId} dialog="artisan" />
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      );
+    },
+  },
 ];
 
 export const ArtisanTable = () => {
@@ -105,10 +135,13 @@ export const ArtisanTable = () => {
           <Input
             placeholder="Search craft speciality"
             value={
-              (table.getColumn("craftSpecialty")?.getFilterValue() as string) ?? ""
+              (table.getColumn("craftSpecialty")?.getFilterValue() as string) ??
+              ""
             }
             onChange={(event) =>
-              table.getColumn("craftSpecialty")?.setFilterValue(event.target.value)
+              table
+                .getColumn("craftSpecialty")
+                ?.setFilterValue(event.target.value)
             }
             className="pl-10"
           />

@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { CategoryForm } from "~/components/forms/category/add-category";
 import { CategoryList } from "~/components/forms/category/category-list";
 import {
@@ -11,14 +10,10 @@ import {
   BreadcrumbPage,
 } from "~/components/ui/breadcrumb";
 
-import { auth } from "~/server/auth";
 import { api } from "~/trpc/server";
 import { HydrateClient } from "~/trpc/server";
-
+export const dynamic = 'force-dynamic'
 export default  async function PriceEstimationPage() {
-
-  const session = await auth()
-  if(!session) redirect('/')
   void api.category.getCategories.prefetch();
   return (
     <HydrateClient>
