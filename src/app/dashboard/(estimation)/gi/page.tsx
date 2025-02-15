@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { GITable } from "~/components/gi/gi-table";
 import { TableSkeleton } from "~/components/skeletons/table";
@@ -11,13 +10,10 @@ import {
   BreadcrumbSeparator,
   BreadcrumbPage,
 } from "~/components/ui/breadcrumb";
-import { auth } from "~/server/auth";
 import { api } from "~/trpc/server";
 import { HydrateClient } from "~/trpc/server";
-
+export const dynamic = "force-dynamic";
 export default async function CarbonEstimationPage() {
-  const session = await auth();
-  if (!session) redirect("/");
   void api.gi.giReports.prefetch();
   return (
     <HydrateClient>

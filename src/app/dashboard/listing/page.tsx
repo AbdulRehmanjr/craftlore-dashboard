@@ -1,8 +1,8 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { ArtisanTable } from "~/components/listing/artisan";
 import { BusinessTable } from "~/components/listing/business";
+import { AddListingDialog } from "~/components/listing/dummy-data";
 import { InstituteTable } from "~/components/listing/institute";
 import { TableSkeleton } from "~/components/skeletons/table";
 import {
@@ -14,15 +14,10 @@ import {
   BreadcrumbPage,
 } from "~/components/ui/breadcrumb";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import { auth } from "~/server/auth";
 import { api, HydrateClient } from "~/trpc/server";
 
+export const dynamic = "force-dynamic";
 export default async function InstitutePage() {
-  const session = await auth();
-  if (!session) {
-    redirect("/");
-  }
-
   void api.listing.getInstitutes.prefetch();
   void api.listing.getArtisans.prefetch();
   void api.listing.getBusinesses.prefetch();
@@ -44,7 +39,8 @@ export default async function InstitutePage() {
           </BreadcrumbList>
         </Breadcrumb>
       </div>
-      <section className="flex flex-1 rounded-lg border border-dashed p-5 shadow-sm md:p-10">
+      <section className="flex flex-col gap-2 rounded-lg border border-dashed p-5 shadow-sm md:p-10">
+        <AddListingDialog />
         <Tabs defaultValue="artisans" className="w-full">
           <TabsList>
             <TabsTrigger value="artisans">Artisans</TabsTrigger>

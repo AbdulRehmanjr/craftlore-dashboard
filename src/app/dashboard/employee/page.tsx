@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { EmployeeTable } from "~/components/employee/table";
 import { TableSkeleton } from "~/components/skeletons/table";
@@ -11,14 +10,10 @@ import {
   BreadcrumbSeparator,
   BreadcrumbPage,
 } from "~/components/ui/breadcrumb";
-import { auth } from "~/server/auth";
 import { api, HydrateClient } from "~/trpc/server";
 
+export const dynamic = 'force-dynamic'
 export default async function EmployeePage() {
-  const session = await auth();
-  if (!session) {
-    redirect("/");
-  }
   void api.employ.getEmployees.prefetch();
 
   return (
