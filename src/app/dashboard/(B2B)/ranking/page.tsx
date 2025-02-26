@@ -1,9 +1,8 @@
 import Link from "next/link";
 import { Suspense } from "react";
-import { ArtisanTable } from "~/components/listing/artisan";
-import { BusinessTable } from "~/components/listing/business";
-import { AddListingDialog } from "~/components/listing/dialogs/dummy-data";
-import { InstituteTable } from "~/components/listing/institute";
+import { RankArtisanTable } from "~/components/ranking/artisan";
+import { RankBusinessTable } from "~/components/ranking/business";
+import { RankInstituteTable } from "~/components/ranking/insitute";
 import { TableSkeleton } from "~/components/skeletons/table";
 import {
   Breadcrumb,
@@ -14,13 +13,10 @@ import {
   BreadcrumbPage,
 } from "~/components/ui/breadcrumb";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
-import { api, HydrateClient } from "~/trpc/server";
+import { HydrateClient } from "~/trpc/server";
 
-export const dynamic = "force-dynamic";
-export default async function InstitutePage() {
-  void api.listing.getInstitutes.prefetch();
-  void api.listing.getArtisans.prefetch();
-  void api.listing.getBusinesses.prefetch();
+export default function RankListingPage() {
+  
 
   return (
     <HydrateClient>
@@ -34,18 +30,18 @@ export default async function InstitutePage() {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>Listing</BreadcrumbPage>
+              <BreadcrumbPage>Ranks</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
       </div>
-      <section className="flex flex-col gap-2 rounded-lg border border-dashed p-5 shadow-sm md:p-10">
-        <AddListingDialog />
+      <section className="space-y-3 rounded-lg border border-dashed p-5 shadow-sm">
+        <h1 className="text-2xl font-bold">Listing Ranks</h1>
         <Tabs defaultValue="artisans" className="w-full">
           <TabsList>
             <TabsTrigger value="artisans">Artisans</TabsTrigger>
-            <TabsTrigger value="Businesses">Businesses</TabsTrigger>
-            <TabsTrigger value="Institutes">Institutes</TabsTrigger>
+            <TabsTrigger value="businesses">Businesses</TabsTrigger>
+            <TabsTrigger value="institutes">Institutes</TabsTrigger>
           </TabsList>
           <TabsContent value="artisans">
             <Suspense
@@ -53,56 +49,52 @@ export default async function InstitutePage() {
                 <TableSkeleton
                   headers={[
                     "Full name",
-                    "Address",
-                    "Speciality",
-                    "Experience",
+                    "Specialty",
                     "Skill",
-                    "Market",
+                    "Experience",
+                    "Rank",
                     "Status",
                   ]}
                 />
               }
             >
-              <ArtisanTable />
+              <RankArtisanTable />
             </Suspense>
           </TabsContent>
-          <TabsContent value="Businesses">
+          <TabsContent value="businesses">
             <Suspense
               fallback={
                 <TableSkeleton
                   headers={[
                     "Name",
-                    "Address",
-                    "Email",
                     "Type",
-                    "No. of employee",
-                    "Sell",
+                    "Market",
+                    "Years of Operation",
+                    "Rank",
                     "Status",
                   ]}
                 />
               }
             >
-              <BusinessTable />
+              <RankBusinessTable />
             </Suspense>
           </TabsContent>
-          <TabsContent value="Institutes">
+          <TabsContent value="institutes">
             <Suspense
               fallback={
                 <TableSkeleton
                   headers={[
                     "Name",
-                    "Address",
-                    "Email",
                     "Type",
                     "Mission",
                     "Representative",
-                    "Designation",
+                    "Rank",
                     "Status",
                   ]}
                 />
               }
             >
-              <InstituteTable />
+              <RankInstituteTable />
             </Suspense>
           </TabsContent>
         </Tabs>

@@ -6,6 +6,100 @@ import { randomUUID } from "crypto";
 
 export const lisitingRouter = createTRPCRouter({
 
+
+    getArtisanDetail: protectedProcedure
+        .input(z.object({ artisanId: z.string() }))
+        .query(async ({ ctx, input }) => {
+            try {
+                return await ctx.db.artisan.findUnique({
+                    where: {
+                        artisanId: input.artisanId,
+                    },
+                    include: {
+                        user: true,
+                        criteria: true,
+                    },
+                });
+
+            } catch (error) {
+                if (error instanceof TRPCError) {
+                    console.error(error.message);
+                    throw new TRPCError({
+                        code: "INTERNAL_SERVER_ERROR",
+                        message: error.message,
+                    });
+                }
+
+                console.error(error);
+                throw new TRPCError({
+                    code: "INTERNAL_SERVER_ERROR",
+                    message: "Something went wrong.",
+                });
+            }
+        }),
+
+    getBusinessDetail: protectedProcedure
+        .input(z.object({ businessId: z.string() }))
+        .query(async ({ ctx, input }) => {
+            try {
+                return await ctx.db.business.findUnique({
+                    where: {
+                        businessId: input.businessId,
+                    },
+                    include: {
+                        user: true,
+                        criteria: true,
+                    },
+                });
+
+            } catch (error) {
+                if (error instanceof TRPCError) {
+                    console.error(error.message);
+                    throw new TRPCError({
+                        code: "INTERNAL_SERVER_ERROR",
+                        message: error.message,
+                    });
+                }
+
+                console.error(error);
+                throw new TRPCError({
+                    code: "INTERNAL_SERVER_ERROR",
+                    message: "Something went wrong.",
+                });
+            }
+        }),
+
+    getInstituteDetail: protectedProcedure
+        .input(z.object({ instituteId: z.string() }))
+        .query(async ({ ctx, input }) => {
+            try {
+                return await ctx.db.institute.findUnique({
+                    where: {
+                        instituteId: input.instituteId,
+                    },
+                    include: {
+                        user: true,
+                        criteria: true,
+                    },
+                });
+
+            } catch (error) {
+                if (error instanceof TRPCError) {
+                    console.error(error.message);
+                    throw new TRPCError({
+                        code: "INTERNAL_SERVER_ERROR",
+                        message: error.message,
+                    });
+                }
+
+                console.error(error);
+                throw new TRPCError({
+                    code: "INTERNAL_SERVER_ERROR",
+                    message: "Something went wrong.",
+                });
+            }
+        }),
+
     getUser: protectedProcedure
         .input(z.object({ userId: z.string() }))
         .query(async ({ ctx, input }) => {

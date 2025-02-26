@@ -13,7 +13,7 @@ export default function DashboardLayout({ children }: Readonly<{ children: React
                         <SidebarTrigger className="-ml-1" />
                     </div>
                 </header>
-                <main className="min-h-[100vh] flex-1 flex-col rounded-xl  border border-dashed  md:min-h-min gap-4 p-4 m-4 ">
+                <main className="min-h-[100vh] flex-1 flex-col rounded-xl  border border-dashed  md:min-h-min gap-4 p-4 m-4">
                     {children}
                 </main>
             </SidebarInset>

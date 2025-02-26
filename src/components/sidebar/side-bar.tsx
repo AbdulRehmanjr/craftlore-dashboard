@@ -24,7 +24,7 @@ const data = {
       icon: Grid,
       items: [
         { title: "Listing", url: "/dashboard/listing" },
-        { title: "Ranking", url: "/dashboard/business" },
+        { title: "Ranking", url: "/dashboard/ranking" },
         { title: "Blacklist", url: "/dashboard/institute" },
       ],
     },
