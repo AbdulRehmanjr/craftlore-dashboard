@@ -15,7 +15,7 @@ type EmployeeProps = {
     fullName: string;
     skills: string;
     contribution: string;
-    organization:string
+    organization: string
 }
 
 type ArtisanProps = {
@@ -67,7 +67,7 @@ type InstituteProps = {
 type CategoryProps = {
     categoryId: string
     categoryName: string
-    rank : number
+    rank: number
 }
 
 type SubCategoryProps = {
@@ -140,4 +140,117 @@ type SectionTypeProps =
     "PaintingAndLacquering" |
     "Embroidery" |
     "ProductLine" |
-    "ProductionMethod" 
+    "ProductionMethod"
+
+
+type BuyerMembershipProps = {
+    buyerMemberId: string;
+    buyerType: string;
+    businessName: string;
+    businessType: string;
+    taxId: string;
+    country: string;
+    website: string;
+    productInterest: string[];
+    orderVolume: string;
+    authentication: string;
+    traceability: string;
+    sustainability: string[];
+    source: string;
+    newsletter: boolean;
+    specialRequirements: string;
+    terms: boolean;
+    userId: string;
+    createdAt: Date;
+    updatedAt: Date;
+    user: {
+        userId: string;
+        fullName: string;
+        email: string;
+        phone: string;
+        address: string;
+    };
+}
+
+
+type CorpoMembershipProps = {
+    corpoMemberId: string;
+    institutionName: string;
+    institutionType: string;
+    industry: string;
+    yearEstablished: number;
+    taxId: string;
+    primaryContact: string;
+    contactEmail: string;
+    contactPhone: string;
+    website: string;
+    headquartersAddress: string;
+    additionalLocations: string;
+    partnershipType: string;
+    partnershipGoals: string;
+    targetProducts: string[];
+    csrInterest: string;
+    csrInitiatives: string;
+    sustainabilityPractices: string;
+    businessLicense: string;
+    proofOfTaxID: string;
+    references: string;
+    engagementChannels: string;
+    customerDemographic: string;
+    brandMission: string;
+    specificRequirements: string;
+    challenges: string;
+    additionalComments: string;
+    terms: boolean;
+    userId: string;
+    createdAt: string | Date;
+    updatedAt: string | Date;
+    user: {
+      userId: string;
+      fullName: string;
+      email: string;
+      phone: string;
+      address?: string;
+    };
+  };
+
+  type SponsorMembershipProps = {
+    sponsorshipId: string;
+    sponsorName: string;
+    contactPerson: string;
+    email: string;
+    phone: string;
+    socialLinks: string;
+    sponsorType: string;
+    industry: string;
+    sponsorshipGoal: string;
+    objectives: string;
+    focusArea: string;
+    tier: string;
+    budgetRange: string;
+    sponsorshipChannel: string;
+    eventInterest: string;
+    productCustomization: string;
+    csrInterest: string;
+    pastCSREfforts: string;
+    sustainabilityPractices: string;
+    brandingOptions: string[];
+    socialHandles: string;
+    communicationChannel: string;
+    impactMetrics: string[];
+    reportFrequency: string;
+    publicUse: string;
+    specialRequirements: string;
+    additionalComments: string;
+    terms: boolean;
+    userId: string;
+    createdAt: string | Date;
+    updatedAt: string | Date;
+    user: {
+      userId: string;
+      fullName: string;
+      email: string;
+      phone: string;
+      address?: string;
+    };
+  };

@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Briefcase, Grid, Home, Settings, Wrench } from "lucide-react";
+import { Briefcase, FileUser, Grid, Home, Settings, Wrench } from "lucide-react";
 import { NavMain } from "~/components/sidebar/nav-main";
 import {
   Sidebar,
@@ -24,8 +24,7 @@ const data = {
       icon: Grid,
       items: [
         { title: "Listing", url: "/dashboard/listing" },
-        { title: "Ranking", url: "/dashboard/business" },
-        { title: "Blacklist", url: "/dashboard/institute" },
+        { title: "Ranking", url: "/dashboard/ranking" }
       ],
     },
     {
@@ -33,10 +32,15 @@ const data = {
       url: "#",
       icon: Briefcase,
       items: [
-        { title: "Buyer", url: "/dashboard/employee" },
-        { title: "Corporate", url: "/dashboard/employee/create" },
-        { title: "Sponsor", url: "/dashboard/employee" },
+        { title: "Buyer", url: "/dashboard/buyer" },
+        { title: "Corporate", url: "/dashboard/corporate" },
+        { title: "Sponsor", url: "/dashboard/sponsor" },
       ],
+    },
+    {
+      title: "Applications",
+      url: "/dashboard/application",
+      icon: FileUser,
     },
     {
       title: "Employee",

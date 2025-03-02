@@ -20,9 +20,10 @@ import {
   ArrowUpIcon,
   ChevronDownIcon,
   ChevronRightIcon,
+  Download,
+  EyeIcon,
   FastForward,
-  GlobeIcon,
-  MapPinIcon,
+  FileTextIcon,
   Rewind,
   SearchIcon,
   SlidersHorizontal,
@@ -39,8 +40,6 @@ import {
   TableHeader,
   TableRow,
 } from "~/components/ui/table";
-import { UpdateUserDialog } from "~/components/listing/dialogs/update-user";
-import { DeleteArtisanDialog } from "./dialogs/delete-artisan";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -64,39 +63,61 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import { Badge } from "~/components/ui/badge";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
+import { Badge } from "~/components/ui/badge";
 import Link from "next/link";
-import { BlacklistArtisan } from "~/components/listing/blacklist/artisan";
-import { getPaginationPages, getStatusColor } from "~/lib/utils";
+import { getPaginationPages } from "~/lib/utils";
 
-type SkillLevel = "Beginner" | "Intermediate" | "Expert" | "Master";
-type MarketType = "Local" | "National" | "International";
-
-const getSkillColor = (skill: SkillLevel) => {
-  switch (skill) {
-    case "Beginner":
-      return "bg-blue-100 text-blue-800 border-blue-300";
-    case "Intermediate":
-      return "bg-indigo-100 text-indigo-800 border-indigo-300";
-    case "Expert":
-      return "bg-purple-100 text-purple-800 border-purple-300";
-    case "Master":
-      return "bg-amber-100 text-amber-800 border-amber-300";
-    default:
-      return "bg-gray-100 text-gray-800 border-gray-300";
-  }
+type AppliedJobProps = {
+  jobId: string;
+  fullName: string;
+  email: string;
+  job: string;
+  jobCode: string;
+  resume: string;
+  coverLetter: string;
 };
 
-const columns: ColumnDef<ArtisanProps>[] = [
+// View Resume Dialog Component (You'll need to implement this)
+const ViewResumeDialog = ({ resumeUrl }: { resumeUrl: string; applicantName: string }) => {
+  return (
+    <Button variant="outline" size="sm" asChild>
+      <Link href={resumeUrl} target="_blank">
+        <FileTextIcon className="mr-2 h-4 w-4" />
+        View Resume
+      </Link>
+    </Button>
+  );
+};
+
+// View Cover Letter Dialog Component (You'll need to implement this)
+const ViewCoverLetterDialog = ({ coverLetterUrl }: { coverLetterUrl: string; applicantName: string }) => {
+  return (
+    <Button variant="outline" size="sm" asChild>
+      <Link href={coverLetterUrl} target="_blank">
+        <FileTextIcon className="mr-2 h-4 w-4" />
+        View Cover Letter
+      </Link>
+    </Button>
+  );
+};
+
+// Function to truncate email for display
+const truncateEmail = (email: string) => {
+  if (email.length > 25) {
+    return `${email.substring(0, 22)}...`;
+  }
+  return email;
+};
+
+const columns: ColumnDef<AppliedJobProps>[] = [
   {
-    id: "fullName",
-    accessorFn: (row) => row.user.fullName,
+    accessorKey: "fullName",
     header: ({ column }) => {
       return (
         <Button
@@ -113,15 +134,12 @@ const columns: ColumnDef<ArtisanProps>[] = [
         </Button>
       );
     },
-    cell: ({ row }) => (
-      <div className="font-medium">{row.original.user.fullName}</div>
-    ),
+    cell: ({ row }) => <div className="font-medium">{row.getValue("fullName")}</div>,
     enableSorting: true,
     enableHiding: false,
   },
   {
-    id: "address",
-    accessorFn: (row) => row.user.address,
+    accessorKey: "email",
     header: ({ column }) => {
       return (
         <Button
@@ -129,7 +147,7 @@ const columns: ColumnDef<ArtisanProps>[] = [
           className="p-0 hover:bg-transparent"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Address
+          Email
           {column.getIsSorted() === "asc" ? (
             <ArrowUpIcon className="ml-2 h-4 w-4" />
           ) : column.getIsSorted() === "desc" ? (
@@ -139,15 +157,15 @@ const columns: ColumnDef<ArtisanProps>[] = [
       );
     },
     cell: ({ row }) => {
-      const address = row.original.user.address;
+      const email: string = row.getValue("email");
       return (
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <div className="max-w-[200px] truncate">{address}</div>
+              <div className="max-w-[200px] truncate">{truncateEmail(email)}</div>
             </TooltipTrigger>
             <TooltipContent>
-              <p>{address}</p>
+              <p>{email}</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
@@ -156,7 +174,7 @@ const columns: ColumnDef<ArtisanProps>[] = [
     enableSorting: true,
   },
   {
-    accessorKey: "craftSpecialty",
+    accessorKey: "job",
     header: ({ column }) => {
       return (
         <Button
@@ -164,7 +182,7 @@ const columns: ColumnDef<ArtisanProps>[] = [
           className="p-0 hover:bg-transparent"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Specialty
+          Job Position
           {column.getIsSorted() === "asc" ? (
             <ArrowUpIcon className="ml-2 h-4 w-4" />
           ) : column.getIsSorted() === "desc" ? (
@@ -173,19 +191,19 @@ const columns: ColumnDef<ArtisanProps>[] = [
         </Button>
       );
     },
-    cell: ({ row }) => <div>{row.getValue("craftSpecialty")}</div>,
+    cell: ({ row }) => <div>{row.getValue("job")}</div>,
     enableSorting: true,
   },
   {
-    accessorKey: "craftExperience",
+    accessorKey: "jobCode",
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
-          className="whitespace-nowrap p-0 hover:bg-transparent"
+          className="p-0 hover:bg-transparent"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Experience
+          Job Code
           {column.getIsSorted() === "asc" ? (
             <ArrowUpIcon className="ml-2 h-4 w-4" />
           ) : column.getIsSorted() === "desc" ? (
@@ -195,112 +213,41 @@ const columns: ColumnDef<ArtisanProps>[] = [
       );
     },
     cell: ({ row }) => (
-      <div className="font-medium">{row.getValue("craftExperience")} years</div>
+      <Badge variant="outline" className="bg-blue-50 text-blue-800 border-blue-200">
+        {row.getValue("jobCode")}
+      </Badge>
     ),
     enableSorting: true,
   },
   {
-    accessorKey: "craftSkill",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          className="p-0 hover:bg-transparent"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Skill Level
-          {column.getIsSorted() === "asc" ? (
-            <ArrowUpIcon className="ml-2 h-4 w-4" />
-          ) : column.getIsSorted() === "desc" ? (
-            <ArrowDownIcon className="ml-2 h-4 w-4" />
-          ) : null}
-        </Button>
-      );
-    },
+    id: "resume",
+    header: "Resume",
     cell: ({ row }) => {
-      const skill: SkillLevel = row.getValue("craftSkill");
-      return (
-        <Badge variant="outline" className={getSkillColor(skill)}>
-          {skill}
-        </Badge>
-      );
-    },
-    enableSorting: true,
-  },
-  {
-    accessorKey: "market",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          className="p-0 hover:bg-transparent"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Market
-          {column.getIsSorted() === "asc" ? (
-            <ArrowUpIcon className="ml-2 h-4 w-4" />
-          ) : column.getIsSorted() === "desc" ? (
-            <ArrowDownIcon className="ml-2 h-4 w-4" />
-          ) : null}
-        </Button>
-      );
-    },
-    cell: ({ row }) => {
-      const market: MarketType = row.getValue("market");
-      return (
-        <div className="flex items-center gap-2">
-          {market === "International" ? (
-            <GlobeIcon className="h-4 w-4 text-blue-600" />
-          ) : market === "National" ? (
-            <MapPinIcon className="h-4 w-4 text-indigo-600" />
-          ) : (
-            <MapPinIcon className="h-4 w-4 text-gray-600" />
-          )}
-          <span className="capitalize">{market}</span>
-        </div>
-      );
-    },
-    enableSorting: true,
-  },
-  {
-    accessorKey: "craftAward",
-    header: "Award",
-    cell: ({ row }) => {
-      const award: string = row.getValue("craftAward");
-      return award ? (
-        <div>{award}</div>
+      const resumeUrl = row.original.resume;
+      return resumeUrl && resumeUrl !== "none" ? (
+        <ViewResumeDialog 
+          resumeUrl={resumeUrl} 
+          applicantName={row.original.fullName} 
+        />
       ) : (
-        <div className="italic text-muted-foreground">None</div>
+        <div className="italic text-muted-foreground">Not provided</div>
       );
     },
   },
   {
-    accessorKey: "status",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          className="p-0 hover:bg-transparent"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Status
-          {column.getIsSorted() === "asc" ? (
-            <ArrowUpIcon className="ml-2 h-4 w-4" />
-          ) : column.getIsSorted() === "desc" ? (
-            <ArrowDownIcon className="ml-2 h-4 w-4" />
-          ) : null}
-        </Button>
-      );
-    },
+    id: "coverLetter",
+    header: "Cover Letter",
     cell: ({ row }) => {
-      const status: string = row.getValue("status");
-      return (
-        <Badge variant="outline" className={getStatusColor(status)}>
-          {status}
-        </Badge>
+      const coverLetterUrl = row.original.coverLetter;
+      return coverLetterUrl && coverLetterUrl !== "none" ? (
+        <ViewCoverLetterDialog 
+          coverLetterUrl={coverLetterUrl} 
+          applicantName={row.original.fullName} 
+        />
+      ) : (
+        <div className="italic text-muted-foreground">Not provided</div>
       );
     },
-    enableSorting: true,
   },
   {
     id: "actions",
@@ -315,39 +262,35 @@ const columns: ColumnDef<ArtisanProps>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-
             <DropdownMenuItem asChild>
-              <Button variant="outline" asChild>
-                <Link
-                  href={`/dashboard/listing/artisan/edit?artisanId=${row.original.artisanId}`}
-                >
-                  Edit
+              <Button variant="outline" size="sm" asChild>
+                <Link href={`/dashboard/jobs/application?jobId=${row.original.jobId}`}>
+                  <EyeIcon className="mr-2 h-4 w-4" />
+                  View Details
                 </Link>
               </Button>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-
-            <DropdownMenuItem asChild>
-              <Button variant="outline" asChild>
-                <Link
-                  href={`/dashboard/listing/artisan?artisanId=${row.original.artisanId}`}
-                >
-                  Detail
-                </Link>
-              </Button>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <UpdateUserDialog userId={row.original.userId} dialog="artisan" />
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <BlacklistArtisan artisanId={row.original.artisanId} />
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <DeleteArtisanDialog artisanId={row.original.artisanId} />
-            </DropdownMenuItem>
+            {row.original.resume && row.original.resume !== "none" && (
+              <DropdownMenuItem asChild>
+                <Button variant="outline" size="sm" asChild>
+                  <Link href={row.original.resume} target="_blank" download>
+                    <Download className="mr-2 h-4 w-4" />
+                    Download Resume
+                  </Link>
+                </Button>
+              </DropdownMenuItem>
+            )}
+            {row.original.coverLetter && row.original.coverLetter !== "none" && (
+              <DropdownMenuItem asChild>
+                <Button variant="outline" size="sm" asChild>
+                  <Link href={row.original.coverLetter} target="_blank" download>
+                    <Download className="mr-2 h-4 w-4" />
+                    Download Cover Letter
+                  </Link>
+                </Button>
+              </DropdownMenuItem>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       );
@@ -355,8 +298,8 @@ const columns: ColumnDef<ArtisanProps>[] = [
   },
 ];
 
-export const ArtisanTable = () => {
-  const [data] = api.listing.getArtisans.useSuspenseQuery();
+export const AppliedJobs = () => {
+  const [data] = api.employ.getAppliedJobs.useSuspenseQuery();
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState<string>("");
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -397,8 +340,8 @@ export const ArtisanTable = () => {
   return (
     <Card className="w-full shadow-sm">
       <CardHeader className="pb-2">
-        <CardTitle>Artisan Directory</CardTitle>
-        <CardDescription>Browse and manage registered artisans</CardDescription>
+        <CardTitle>Job Applications</CardTitle>
+        <CardDescription>Browse and manage job applications from candidates</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="flex w-full flex-col gap-4">
@@ -444,9 +387,7 @@ export const ArtisanTable = () => {
                             column.toggleVisibility(!!value)
                           }
                         >
-                          {column.id === "fullName"
-                            ? "Full Name"
-                            : column.id.replace(/([A-Z])/g, " $1").trim()}
+                          {column.id.replace(/([A-Z])/g, " $1").trim()}
                         </DropdownMenuCheckboxItem>
                       );
                     })}
@@ -458,47 +399,20 @@ export const ArtisanTable = () => {
             <div className="flex flex-1 flex-col gap-2 sm:flex-row">
               <div className="relative flex-1 md:max-w-xs">
                 <Input
-                  placeholder="Filter by specialty..."
-                  value={
-                    (table
-                      .getColumn("craftSpecialty")
-                      ?.getFilterValue() as string) ?? ""
-                  }
+                  placeholder="Filter by job position..."
+                  value={(table.getColumn("job")?.getFilterValue() as string) ?? ""}
                   onChange={(event) =>
-                    table
-                      .getColumn("craftSpecialty")
-                      ?.setFilterValue(event.target.value)
+                    table.getColumn("job")?.setFilterValue(event.target.value)
                   }
                   className="w-full"
                 />
               </div>
               <div className="relative flex-1 md:max-w-xs">
                 <Input
-                  placeholder="Filter by skill level..."
-                  value={
-                    (table
-                      .getColumn("craftSkill")
-                      ?.getFilterValue() as string) ?? ""
-                  }
+                  placeholder="Filter by job code..."
+                  value={(table.getColumn("jobCode")?.getFilterValue() as string) ?? ""}
                   onChange={(event) =>
-                    table
-                      .getColumn("craftSkill")
-                      ?.setFilterValue(event.target.value)
-                  }
-                  className="w-full"
-                />
-              </div>
-              <div className="relative flex-1 md:max-w-xs">
-                <Input
-                  placeholder="Filter by status..."
-                  value={
-                    (table.getColumn("status")?.getFilterValue() as string) ??
-                    ""
-                  }
-                  onChange={(event) =>
-                    table
-                      .getColumn("status")
-                      ?.setFilterValue(event.target.value)
+                    table.getColumn("jobCode")?.setFilterValue(event.target.value)
                   }
                   className="w-full"
                 />
@@ -547,7 +461,7 @@ export const ArtisanTable = () => {
                       colSpan={columns.length}
                       className="h-24 text-center"
                     >
-                      No results found.
+                      No applications found.
                     </TableCell>
                   </TableRow>
                 )}
