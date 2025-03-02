@@ -102,7 +102,7 @@ export const employRouter = createTRPCRouter({
             fullName: z.string(),
             skills: z.string(),
             contribution: z.string(),
-            organization:z.string()
+            organization: z.string()
         }))
         .mutation(async ({ ctx, input }) => {
             try {
@@ -112,7 +112,7 @@ export const employRouter = createTRPCRouter({
                         fullName: input.fullName,
                         skills: input.skills,
                         contribution: input.contribution,
-                        organization:input.organization
+                        organization: input.organization
                     }
                 })
             } catch (error) {
@@ -153,5 +153,26 @@ export const employRouter = createTRPCRouter({
                 })
             }
         }),
+
+
+    getAppliedJobs: protectedProcedure.query(async ({ ctx }) => {
+        try {
+            return await ctx.db.appliedJob.findMany();
+        } catch (error) {
+            if (error instanceof TRPCClientError) {
+                console.error(error.message)
+                throw new TRPCError({
+                    code: 'INTERNAL_SERVER_ERROR',
+                    message: 'database connection timeout'
+                })
+            }
+            console.error(error)
+            throw new TRPCError({
+                code: 'INTERNAL_SERVER_ERROR',
+                message: 'Something went wrong'
+            })
+        }
+
+    }),
 
 });

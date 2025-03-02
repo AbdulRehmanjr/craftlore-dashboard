@@ -732,6 +732,7 @@ export const lisitingRouter = createTRPCRouter({
                 });
             }
         }),
+
     deleteInstitute: protectedProcedure
         .input(z.object({ instituteId: z.string() }))
         .mutation(async ({ ctx, input }) => {
@@ -762,6 +763,92 @@ export const lisitingRouter = createTRPCRouter({
                     });
                 }
 
+                console.error(error);
+                throw new TRPCError({
+                    code: "INTERNAL_SERVER_ERROR",
+                    message: "Something went wrong.",
+                });
+            }
+        }),
+
+    blackListArtisan: protectedProcedure
+        .input(z.object({ artisanId: z.string() }))
+        .mutation(async ({ ctx, input }) => {
+            try {
+                await ctx.db.artisan.update({
+                    where: {
+                        artisanId: input.artisanId,
+                    },
+                    data: {
+                        status: 'blacklist'
+                    }
+                });
+            } catch (error) {
+                if (error instanceof TRPCError) {
+                    console.error(error.message);
+                    throw new TRPCError({
+                        code: "INTERNAL_SERVER_ERROR",
+                        message: error.message,
+                    });
+                }
+
+                console.error(error);
+                throw new TRPCError({
+                    code: "INTERNAL_SERVER_ERROR",
+                    message: "Something went wrong.",
+                });
+            }
+        }),
+
+    blackListBusiness: protectedProcedure
+        .input(z.object({ businessId: z.string() }))
+        .mutation(async ({ ctx, input }) => {
+            try {
+                await ctx.db.business.update({
+                    where: {
+                        businessId: input.businessId,
+                    },
+                    data: {
+                        status: 'blacklist'
+                    }
+                });
+            } catch (error) {
+                if (error instanceof TRPCError) {
+                    console.error(error.message);
+                    throw new TRPCError({
+                        code: "INTERNAL_SERVER_ERROR",
+                        message: error.message,
+                    });
+                }
+
+                console.error(error);
+                throw new TRPCError({
+                    code: "INTERNAL_SERVER_ERROR",
+                    message: "Something went wrong.",
+                });
+            }
+        }),
+
+    blackListInstitute: protectedProcedure
+        .input(z.object({ instituteId: z.string() }))
+        .mutation(async ({ ctx, input }) => {
+            try {
+                await ctx.db.institute.update({
+                    where: {
+                        instituteId: input.instituteId,
+                    },
+                    data: {
+                        status: 'blacklist'
+                    }
+                });
+            } catch (error) {
+                if (error instanceof TRPCError) {
+                    console.error(error.message);
+                    throw new TRPCError({
+                        code: "INTERNAL_SERVER_ERROR",
+                        message: error.message,
+                    });
+                }
                 console.error(error);
                 throw new TRPCError({
                     code: "INTERNAL_SERVER_ERROR",

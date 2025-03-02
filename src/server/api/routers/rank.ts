@@ -1,4 +1,3 @@
-// src/server/api/routers/ranks.ts
 import { createTRPCRouter, publicProcedure } from "../trpc";
 import { ListingRanks } from "@prisma/client";
 

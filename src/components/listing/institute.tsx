@@ -18,21 +18,17 @@ import {
   ArrowDownIcon,
   ArrowLeft,
   ArrowUpIcon,
-  BuildingIcon,
   ChevronDownIcon,
   ChevronRightIcon,
   FastForward,
-  GraduationCapIcon,
   MailIcon,
   MapPinIcon,
   Rewind,
-  SchoolIcon,
   SearchIcon,
   SlidersHorizontal,
   UserIcon,
   XIcon,
 } from "lucide-react";
-
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import {
@@ -77,82 +73,10 @@ import {
 } from "~/components/ui/tooltip";
 import { InstitutionType } from "@prisma/client";
 import Link from "next/link";
+import { BlacklistInstitute } from "~/components/listing/blacklist/institute";
+import { getInstitutionTypeColor, getInstitutionTypeFormat, getInstitutionTypeIcon, getPaginationPages, getStatusColor } from "~/lib/utils";
 
 
-
-const getStatusColor = (status: string) => {
-  switch (status.toLowerCase()) {
-    case "active":
-      return "bg-green-100 text-green-800 border-green-300";
-    case "pending":
-      return "bg-yellow-100 text-yellow-800 border-yellow-300";
-    case "inactive":
-      return "bg-red-100 text-red-800 border-red-300";
-    case "suspended":
-      return "bg-gray-100 text-gray-800 border-gray-300";
-    default:
-      return "bg-blue-100 text-blue-800 border-blue-300";
-  }
-};
-
-const getInstitutionTypeIcon = (type: InstitutionType) => {
-  switch (type) {
-    case InstitutionType.Governance:
-      return BuildingIcon;
-    case InstitutionType.NGO:
-      return BuildingIcon;
-    case InstitutionType.Training_Body:
-      return GraduationCapIcon;
-    case InstitutionType.Educational_Body:
-      return SchoolIcon;
-    default:
-      return BuildingIcon;
-  }
-};
-
-const getInstitutionTypeColor = (type: InstitutionType) => {
-  switch (type) {
-    case InstitutionType.Governance:
-      return "bg-amber-100 text-amber-800 border-amber-300";
-    case InstitutionType.NGO:
-      return "bg-green-100 text-green-800 border-green-300";
-    case InstitutionType.Training_Body:
-      return "bg-blue-100 text-blue-800 border-blue-300";
-    case InstitutionType.Educational_Body:
-      return "bg-purple-100 text-purple-800 border-purple-300";
-    default:
-      return "bg-gray-100 text-gray-800 border-gray-300";
-  }
-};
-
-const getInstitutionTypeFormat = (type: InstitutionType) => {
-  switch (type) {
-    case InstitutionType.Governance:
-      return "Governance";
-    case InstitutionType.NGO:
-      return "NGO";
-    case InstitutionType.Training_Body:
-      return "Training Body";
-    case InstitutionType.Educational_Body:
-      return "Eductional Body";
-    default:
-      return "None";
-  }
-};
-const getPaginationPages = (totalPages: number, currentPage: number) => {
-  const maxPages = 5;
-  let startPage = Math.max(0, currentPage - Math.floor(maxPages / 2));
-  const endPage = Math.min(totalPages - 1, startPage + maxPages - 1);
-
-  if (endPage - startPage + 1 < maxPages) {
-    startPage = Math.max(0, endPage - maxPages + 1);
-  }
-
-  return Array.from(
-    { length: endPage - startPage + 1 },
-    (_, i) => startPage + i,
-  );
-};
 
 const columns: ColumnDef<InstituteProps>[] = [
   {
@@ -245,13 +169,13 @@ const columns: ColumnDef<InstituteProps>[] = [
       );
     },
     cell: ({ row }) => {
-      const address :string = row.getValue("instituteAddress");
+      const address: string = row.getValue("instituteAddress");
       return (
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <div className="flex items-center gap-2 max-w-[200px] truncate">
-                <MapPinIcon className="h-4 w-4 text-gray-500 flex-shrink-0" />
+              <div className="flex max-w-[200px] items-center gap-2 truncate">
+                <MapPinIcon className="h-4 w-4 flex-shrink-0 text-gray-500" />
                 <div className="truncate">{address}</div>
               </div>
             </TooltipTrigger>
@@ -283,7 +207,7 @@ const columns: ColumnDef<InstituteProps>[] = [
       );
     },
     cell: ({ row }) => {
-      const  email : string = row.getValue("instituteEmail");
+      const email: string = row.getValue("instituteEmail");
       return (
         <div className="flex items-center gap-2">
           <MailIcon className="h-4 w-4 text-gray-500" />
@@ -312,7 +236,7 @@ const columns: ColumnDef<InstituteProps>[] = [
       );
     },
     cell: ({ row }) => {
-      const type  :InstitutionType= row.getValue("instituteType");
+      const type: InstitutionType = row.getValue("instituteType");
       const Icon = getInstitutionTypeIcon(type);
       return (
         <Badge variant="outline" className={getInstitutionTypeColor(type)}>
@@ -342,7 +266,7 @@ const columns: ColumnDef<InstituteProps>[] = [
       );
     },
     cell: ({ row }) => {
-      const mission :string = row.getValue("instituteMission");
+      const mission: string = row.getValue("instituteMission");
       return (
         <TooltipProvider>
           <Tooltip>
@@ -377,7 +301,7 @@ const columns: ColumnDef<InstituteProps>[] = [
       );
     },
     cell: ({ row }) => {
-      const status:string = row.getValue("status");
+      const status: string = row.getValue("status");
       return (
         <Badge variant="outline" className={getStatusColor(status)}>
           {status}
@@ -402,19 +326,33 @@ const columns: ColumnDef<InstituteProps>[] = [
             <DropdownMenuItem asChild>
               <Button variant="outline" asChild>
                 <Link
+                  href={`/dashboard/listing/institute/edit?instituteId=${row.original.instituteId}`}
+                >
+                  Edit
+                </Link>
+              </Button>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild>
+              <Button variant="outline" asChild>
+                <Link
                   href={`/dashboard/listing/institute?instituteId=${row.original.instituteId}`}
                 >
                   Detail
                 </Link>
               </Button>
             </DropdownMenuItem>
-            <DropdownMenuSeparator/>
+            <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
               <UpdateUserDialog userId={row.original.userId} dialog="institute"/>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
-              <DeleteInstituteDialog instituteId={row.original.instituteId}/>
+              <BlacklistInstitute instituteId={row.original.instituteId} />
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild>
+              <DeleteInstituteDialog instituteId={row.original.instituteId} />
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -466,7 +404,9 @@ export const InstituteTable = () => {
     <Card className="w-full shadow-sm">
       <CardHeader className="pb-2">
         <CardTitle>Institution Directory</CardTitle>
-        <CardDescription>Browse and manage registered institutions</CardDescription>
+        <CardDescription>
+          Browse and manage registered institutions
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="flex w-full flex-col gap-4">
@@ -515,18 +455,20 @@ export const InstituteTable = () => {
                           {column.id === "instituteName"
                             ? "Institute Name"
                             : column.id === "instituteRep"
-                            ? "Representative"
-                            : column.id === "repDes"
-                            ? "Designation"
-                            : column.id === "instituteAddress"
-                            ? "Address"
-                            : column.id === "instituteEmail"
-                            ? "Email"
-                            : column.id === "instituteType"
-                            ? "Type"
-                            : column.id === "instituteMission"
-                            ? "Mission"
-                            : column.id.replace(/([A-Z])/g, " $1").trim()}
+                              ? "Representative"
+                              : column.id === "repDes"
+                                ? "Designation"
+                                : column.id === "instituteAddress"
+                                  ? "Address"
+                                  : column.id === "instituteEmail"
+                                    ? "Email"
+                                    : column.id === "instituteType"
+                                      ? "Type"
+                                      : column.id === "instituteMission"
+                                        ? "Mission"
+                                        : column.id
+                                            .replace(/([A-Z])/g, " $1")
+                                            .trim()}
                         </DropdownMenuCheckboxItem>
                       );
                     })}
@@ -534,7 +476,7 @@ export const InstituteTable = () => {
               </DropdownMenu>
             </div>
           </div>
-          
+
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div className="flex flex-1 flex-col gap-2 sm:flex-row">
               <div className="relative flex-1 md:max-w-xs">
@@ -555,7 +497,11 @@ export const InstituteTable = () => {
               </div>
               <div className="relative flex-1 md:max-w-xs">
                 <Select
-                  value={(table.getColumn("instituteType")?.getFilterValue() as string) ?? ""}
+                  value={
+                    (table
+                      .getColumn("instituteType")
+                      ?.getFilterValue() as string) ?? ""
+                  }
                   onValueChange={(value) =>
                     table.getColumn("instituteType")?.setFilterValue(value)
                   }
@@ -566,9 +512,15 @@ export const InstituteTable = () => {
                   <SelectContent>
                     <SelectItem value="All">All Types</SelectItem>
                     <SelectItem value={InstitutionType.NGO}>NGO</SelectItem>
-                    <SelectItem value={InstitutionType.Governance}>Governance</SelectItem>
-                    <SelectItem value={InstitutionType.Training_Body}>Training Body</SelectItem>
-                    <SelectItem value={InstitutionType.Educational_Body}>Educational Body</SelectItem>
+                    <SelectItem value={InstitutionType.Governance}>
+                      Governance
+                    </SelectItem>
+                    <SelectItem value={InstitutionType.Training_Body}>
+                      Training Body
+                    </SelectItem>
+                    <SelectItem value={InstitutionType.Educational_Body}>
+                      Educational Body
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -576,17 +528,20 @@ export const InstituteTable = () => {
                 <Input
                   placeholder="Filter by status..."
                   value={
-                    (table.getColumn("status")?.getFilterValue() as string) ?? ""
+                    (table.getColumn("status")?.getFilterValue() as string) ??
+                    ""
                   }
                   onChange={(event) =>
-                    table.getColumn("status")?.setFilterValue(event.target.value)
+                    table
+                      .getColumn("status")
+                      ?.setFilterValue(event.target.value)
                   }
                   className="w-full"
                 />
               </div>
             </div>
           </div>
-          
+
           <div className="rounded-md border">
             <Table>
               <TableHeader>
@@ -636,7 +591,7 @@ export const InstituteTable = () => {
               </TableBody>
             </Table>
           </div>
-          
+
           <div className="my-4 flex items-center justify-between px-2">
             <div className="flex items-center space-x-6 lg:space-x-8">
               <div className="flex items-center space-x-2">

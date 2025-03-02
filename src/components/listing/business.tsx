@@ -18,19 +18,14 @@ import {
   ArrowDownIcon,
   ArrowLeft,
   ArrowUpIcon,
-  BriefcaseIcon,
-  BuildingIcon,
   ChevronDownIcon,
   ChevronRightIcon,
   FastForward,
-  type LucideIcon,
   MailIcon,
   MapPinIcon,
   Rewind,
   SearchIcon,
-  ShoppingBagIcon,
   SlidersHorizontal,
-  StoreIcon,
   UsersIcon,
   XIcon,
 } from "lucide-react";
@@ -77,84 +72,11 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip";
-import { BusinessLevel } from "@prisma/client";
+
 import Link from "next/link";
-
-
-const getStatusColor = (status: string) => {
-  switch (status.toLowerCase()) {
-    case "active":
-      return "bg-green-100 text-green-800 border-green-300";
-    case "pending":
-      return "bg-yellow-100 text-yellow-800 border-yellow-300";
-    case "inactive":
-      return "bg-red-100 text-red-800 border-red-300";
-    case "suspended":
-      return "bg-gray-100 text-gray-800 border-gray-300";
-    default:
-      return "bg-blue-100 text-blue-800 border-blue-300";
-  }
-};
-
-const getBusinessTypeIcon = (type: BusinessLevel): LucideIcon => {
-  switch (type) {
-    case "Large_Enterprice":
-      return BuildingIcon;
-    case "Mid_sized_Business":
-      return BriefcaseIcon;
-    case "Small_Business":
-      return StoreIcon;
-    case "Startup":
-      return ShoppingBagIcon;
-    default:
-      return StoreIcon;
-  }
-};
-
-const getBusinessTypeColor = (type: BusinessLevel) => {
-  switch (type) {
-    case BusinessLevel.Large_Enterprice:
-      return "bg-purple-100 text-purple-800 border-purple-300";
-    case BusinessLevel.Mid_sized_Business:
-      return "bg-blue-100 text-blue-800 border-blue-300";
-    case BusinessLevel.Small_Business:
-      return "bg-indigo-100 text-indigo-800 border-indigo-300";
-    case BusinessLevel.Startup:
-      return "bg-amber-100 text-amber-800 border-amber-300";
-    default:
-      return "bg-gray-100 text-gray-800 border-gray-300";
-  }
-};
-
-const formatBusinessLevel = (type: BusinessLevel): string => {
-  switch(type) {
-    case BusinessLevel.Large_Enterprice:
-      return "Large Enterprice";
-    case BusinessLevel.Mid_sized_Business:
-      return "Mid-sized Business";
-    case BusinessLevel.Small_Business:
-      return "Small Business";
-    case BusinessLevel.Startup:
-      return "Startup";
-    default:
-      return "None";
-  }
-};
-
-const getPaginationPages = (totalPages: number, currentPage: number) => {
-  const maxPages = 5;
-  let startPage = Math.max(0, currentPage - Math.floor(maxPages / 2));
-  const endPage = Math.min(totalPages - 1, startPage + maxPages - 1);
-
-  if (endPage - startPage + 1 < maxPages) {
-    startPage = Math.max(0, endPage - maxPages + 1);
-  }
-
-  return Array.from(
-    { length: endPage - startPage + 1 },
-    (_, i) => startPage + i,
-  );
-};
+import { BlacklistBusiness } from "~/components/listing/blacklist/business";
+import { formatBusinessLevel, getBusinessTypeColor, getBusinessTypeIcon, getPaginationPages, getStatusColor } from "~/lib/utils";
+import { type BusinessLevel } from "@prisma/client";
 
 const columns: ColumnDef<BusinessProps>[] = [
   {
@@ -405,18 +327,32 @@ const columns: ColumnDef<BusinessProps>[] = [
             <DropdownMenuItem asChild>
               <Button variant="outline" asChild>
                 <Link
+                  href={`/dashboard/listing/business/edit?businessId=${row.original.businessId}`}
+                >
+                  Edit
+                </Link>
+              </Button>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild>
+              <Button variant="outline" asChild>
+                <Link
                   href={`/dashboard/listing/business?businessId=${row.original.businessId}`}
                 >
                   Detail
                 </Link>
               </Button>
             </DropdownMenuItem>
-            <DropdownMenuSeparator/>
+            <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
               <UpdateUserDialog
                 userId={row.original.userId}
                 dialog="business"
               />
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild>
+              <BlacklistBusiness businessId={row.original.businessId} />
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
@@ -441,8 +377,6 @@ export const BusinessTable = () => {
     pageIndex: 0,
     pageSize: 10,
   });
-
-
 
   const table = useReactTable({
     data,

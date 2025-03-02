@@ -21,11 +21,10 @@ import {
   ChevronDownIcon,
   ChevronRightIcon,
   FastForward,
-  GlobeIcon,
-  MapPinIcon,
   Rewind,
   SearchIcon,
-  SlidersHorizontal,
+  HeartIcon,
+  PhoneIcon,
   XIcon,
 } from "lucide-react";
 
@@ -39,15 +38,10 @@ import {
   TableHeader,
   TableRow,
 } from "~/components/ui/table";
-import { UpdateUserDialog } from "~/components/listing/dialogs/update-user";
-import { DeleteArtisanDialog } from "./dialogs/delete-artisan";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 import {
@@ -65,38 +59,52 @@ import {
   SelectValue,
 } from "~/components/ui/select";
 import { Badge } from "~/components/ui/badge";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "~/components/ui/tooltip";
-import Link from "next/link";
-import { BlacklistArtisan } from "~/components/listing/blacklist/artisan";
-import { getPaginationPages, getStatusColor } from "~/lib/utils";
+import { getPaginationPages } from "~/lib/utils";
+import dayjs from "dayjs";
 
-type SkillLevel = "Beginner" | "Intermediate" | "Expert" | "Master";
-type MarketType = "Local" | "National" | "International";
 
-const getSkillColor = (skill: SkillLevel) => {
-  switch (skill) {
-    case "Beginner":
+// Helper function to get badge color based on sponsor type
+const getSponsorTypeColor = (sponsorType: string) => {
+  switch (sponsorType) {
+    case "Corporate":
       return "bg-blue-100 text-blue-800 border-blue-300";
-    case "Intermediate":
+    case "Foundation":
       return "bg-indigo-100 text-indigo-800 border-indigo-300";
-    case "Expert":
+    case "Individual":
       return "bg-purple-100 text-purple-800 border-purple-300";
-    case "Master":
+    case "Government":
       return "bg-amber-100 text-amber-800 border-amber-300";
     default:
       return "bg-gray-100 text-gray-800 border-gray-300";
   }
 };
 
-const columns: ColumnDef<ArtisanProps>[] = [
+// Helper function to get tier color
+const getTierColor = (tier: string) => {
+  switch (tier) {
+    case "Platinum":
+      return "bg-slate-100 text-slate-800 border-slate-300";
+    case "Gold":
+      return "bg-amber-100 text-amber-800 border-amber-300";
+    case "Silver":
+      return "bg-gray-100 text-gray-800 border-gray-300";
+    case "Bronze":
+      return "bg-yellow-100 text-yellow-800 border-yellow-300";
+    default:
+      return "bg-gray-100 text-gray-800 border-gray-300";
+  }
+};
+
+// Helper function to get CSR interest badge color
+const getCSRInterestColor = (csrInterest: string) => {
+  return csrInterest === "Yes" 
+    ? "bg-green-100 text-green-800 border-green-300"
+    : "bg-gray-100 text-gray-800 border-gray-300";
+};
+
+const columns: ColumnDef<SponsorMembershipProps>[] = [
   {
-    id: "fullName",
-    accessorFn: (row) => row.user.fullName,
+    accessorKey: "sponsorName",
     header: ({ column }) => {
       return (
         <Button
@@ -104,7 +112,7 @@ const columns: ColumnDef<ArtisanProps>[] = [
           className="p-0 hover:bg-transparent"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Full Name
+          Sponsor Name
           {column.getIsSorted() === "asc" ? (
             <ArrowUpIcon className="ml-2 h-4 w-4" />
           ) : column.getIsSorted() === "desc" ? (
@@ -113,15 +121,19 @@ const columns: ColumnDef<ArtisanProps>[] = [
         </Button>
       );
     },
-    cell: ({ row }) => (
-      <div className="font-medium">{row.original.user.fullName}</div>
-    ),
+    cell: ({ row }) => {
+      const sponsorName: string = row.getValue("sponsorName");
+      return sponsorName !== "none" ? (
+        <div className="font-medium">{sponsorName}</div>
+      ) : (
+        <div className="italic text-muted-foreground">Not provided</div>
+      );
+    },
     enableSorting: true,
     enableHiding: false,
   },
   {
-    id: "address",
-    accessorFn: (row) => row.user.address,
+    accessorKey: "contactPerson",
     header: ({ column }) => {
       return (
         <Button
@@ -129,7 +141,7 @@ const columns: ColumnDef<ArtisanProps>[] = [
           className="p-0 hover:bg-transparent"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Address
+          Contact Person
           {column.getIsSorted() === "asc" ? (
             <ArrowUpIcon className="ml-2 h-4 w-4" />
           ) : column.getIsSorted() === "desc" ? (
@@ -139,24 +151,48 @@ const columns: ColumnDef<ArtisanProps>[] = [
       );
     },
     cell: ({ row }) => {
-      const address = row.original.user.address;
-      return (
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div className="max-w-[200px] truncate">{address}</div>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>{address}</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+      const contactPerson: string = row.getValue("contactPerson");
+      return contactPerson !== "none" ? (
+        <div>{contactPerson}</div>
+      ) : (
+        <div className="italic text-muted-foreground">Not provided</div>
       );
     },
     enableSorting: true,
   },
   {
-    accessorKey: "craftSpecialty",
+    accessorKey: "email",
+    header: "Email",
+    cell: ({ row }) => {
+      const email: string = row.getValue("email");
+      return email ? (
+        <div className="truncate max-w-[180px]">
+          <a href={`mailto:${email}`} className="text-blue-600 hover:underline">
+            {email}
+          </a>
+        </div>
+      ) : (
+        <div className="italic text-muted-foreground">Not provided</div>
+      );
+    },
+  },
+  {
+    accessorKey: "phone",
+    header: "Phone",
+    cell: ({ row }) => {
+      const phone: string = row.getValue("phone");
+      return phone !== "none" ? (
+        <div className="flex items-center gap-2">
+          <PhoneIcon className="h-4 w-4 text-slate-600" />
+          <span>{phone}</span>
+        </div>
+      ) : (
+        <div className="italic text-muted-foreground">Not provided</div>
+      );
+    },
+  },
+  {
+    accessorKey: "sponsorType",
     header: ({ column }) => {
       return (
         <Button
@@ -164,51 +200,7 @@ const columns: ColumnDef<ArtisanProps>[] = [
           className="p-0 hover:bg-transparent"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Specialty
-          {column.getIsSorted() === "asc" ? (
-            <ArrowUpIcon className="ml-2 h-4 w-4" />
-          ) : column.getIsSorted() === "desc" ? (
-            <ArrowDownIcon className="ml-2 h-4 w-4" />
-          ) : null}
-        </Button>
-      );
-    },
-    cell: ({ row }) => <div>{row.getValue("craftSpecialty")}</div>,
-    enableSorting: true,
-  },
-  {
-    accessorKey: "craftExperience",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          className="whitespace-nowrap p-0 hover:bg-transparent"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Experience
-          {column.getIsSorted() === "asc" ? (
-            <ArrowUpIcon className="ml-2 h-4 w-4" />
-          ) : column.getIsSorted() === "desc" ? (
-            <ArrowDownIcon className="ml-2 h-4 w-4" />
-          ) : null}
-        </Button>
-      );
-    },
-    cell: ({ row }) => (
-      <div className="font-medium">{row.getValue("craftExperience")} years</div>
-    ),
-    enableSorting: true,
-  },
-  {
-    accessorKey: "craftSkill",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          className="p-0 hover:bg-transparent"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Skill Level
+          Type
           {column.getIsSorted() === "asc" ? (
             <ArrowUpIcon className="ml-2 h-4 w-4" />
           ) : column.getIsSorted() === "desc" ? (
@@ -218,17 +210,19 @@ const columns: ColumnDef<ArtisanProps>[] = [
       );
     },
     cell: ({ row }) => {
-      const skill: SkillLevel = row.getValue("craftSkill");
-      return (
-        <Badge variant="outline" className={getSkillColor(skill)}>
-          {skill}
+      const sponsorType: string = row.getValue("sponsorType");
+      return sponsorType !== "none" ? (
+        <Badge variant="outline" className={getSponsorTypeColor(sponsorType)}>
+          {sponsorType}
         </Badge>
+      ) : (
+        <Badge variant="outline">Not specified</Badge>
       );
     },
     enableSorting: true,
   },
   {
-    accessorKey: "market",
+    accessorKey: "industry",
     header: ({ column }) => {
       return (
         <Button
@@ -236,7 +230,7 @@ const columns: ColumnDef<ArtisanProps>[] = [
           className="p-0 hover:bg-transparent"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Market
+          Industry
           {column.getIsSorted() === "asc" ? (
             <ArrowUpIcon className="ml-2 h-4 w-4" />
           ) : column.getIsSorted() === "desc" ? (
@@ -246,36 +240,102 @@ const columns: ColumnDef<ArtisanProps>[] = [
       );
     },
     cell: ({ row }) => {
-      const market: MarketType = row.getValue("market");
+      const industry: string = row.getValue("industry");
+      return industry !== "none" ? (
+        <div>{industry}</div>
+      ) : (
+        <div className="italic text-muted-foreground">Not specified</div>
+      );
+    },
+    enableSorting: true,
+  },
+  {
+    accessorKey: "tier",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          className="p-0 hover:bg-transparent"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Tier
+          {column.getIsSorted() === "asc" ? (
+            <ArrowUpIcon className="ml-2 h-4 w-4" />
+          ) : column.getIsSorted() === "desc" ? (
+            <ArrowDownIcon className="ml-2 h-4 w-4" />
+          ) : null}
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      const tier: string = row.getValue("tier");
+      return tier !== "none" ? (
+        <Badge variant="outline" className={getTierColor(tier)}>
+          {tier}
+        </Badge>
+      ) : (
+        <div className="italic text-muted-foreground">Not specified</div>
+      );
+    },
+    enableSorting: true,
+  },
+  {
+    accessorKey: "budgetRange",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          className="p-0 hover:bg-transparent"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Budget
+          {column.getIsSorted() === "asc" ? (
+            <ArrowUpIcon className="ml-2 h-4 w-4" />
+          ) : column.getIsSorted() === "desc" ? (
+            <ArrowDownIcon className="ml-2 h-4 w-4" />
+          ) : null}
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      const budget: string = row.getValue("budgetRange");
+      return budget !== "none" ? (
+        <div>{budget}</div>
+      ) : (
+        <div className="italic text-muted-foreground">Not specified</div>
+      );
+    },
+    enableSorting: true,
+  },
+  {
+    accessorKey: "focusArea",
+    header: "Focus Area",
+    cell: ({ row }) => {
+      const focusArea: string = row.getValue("focusArea");
+      return focusArea !== "none" ? (
+        <div>{focusArea}</div>
+      ) : (
+        <div className="italic text-muted-foreground">Not specified</div>
+      );
+    },
+  },
+  {
+    accessorKey: "csrInterest",
+    header: "CSR Interest",
+    cell: ({ row }) => {
+      const csrInterest: string = row.getValue("csrInterest");
       return (
         <div className="flex items-center gap-2">
-          {market === "International" ? (
-            <GlobeIcon className="h-4 w-4 text-blue-600" />
-          ) : market === "National" ? (
-            <MapPinIcon className="h-4 w-4 text-indigo-600" />
-          ) : (
-            <MapPinIcon className="h-4 w-4 text-gray-600" />
-          )}
-          <span className="capitalize">{market}</span>
+          {csrInterest === "Yes" && <HeartIcon className="h-4 w-4 text-red-500" />}
+          <Badge variant="outline" className={getCSRInterestColor(csrInterest)}>
+            {csrInterest}
+          </Badge>
         </div>
       );
     },
-    enableSorting: true,
   },
   {
-    accessorKey: "craftAward",
-    header: "Award",
-    cell: ({ row }) => {
-      const award: string = row.getValue("craftAward");
-      return award ? (
-        <div>{award}</div>
-      ) : (
-        <div className="italic text-muted-foreground">None</div>
-      );
-    },
-  },
-  {
-    accessorKey: "status",
+    accessorKey: "createdAt",
     header: ({ column }) => {
       return (
         <Button
@@ -283,7 +343,7 @@ const columns: ColumnDef<ArtisanProps>[] = [
           className="p-0 hover:bg-transparent"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Status
+          Joined
           {column.getIsSorted() === "asc" ? (
             <ArrowUpIcon className="ml-2 h-4 w-4" />
           ) : column.getIsSorted() === "desc" ? (
@@ -293,74 +353,21 @@ const columns: ColumnDef<ArtisanProps>[] = [
       );
     },
     cell: ({ row }) => {
-      const status: string = row.getValue("status");
-      return (
-        <Badge variant="outline" className={getStatusColor(status)}>
-          {status}
-        </Badge>
-      );
+      return <div>{dayjs(row.getValue("createdAt")).format("DD.MM.YYYY")}</div>;
     },
     enableSorting: true,
   },
-  {
-    id: "actions",
-    cell: ({ row }) => {
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <SlidersHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-
-            <DropdownMenuItem asChild>
-              <Button variant="outline" asChild>
-                <Link
-                  href={`/dashboard/listing/artisan/edit?artisanId=${row.original.artisanId}`}
-                >
-                  Edit
-                </Link>
-              </Button>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-
-            <DropdownMenuItem asChild>
-              <Button variant="outline" asChild>
-                <Link
-                  href={`/dashboard/listing/artisan?artisanId=${row.original.artisanId}`}
-                >
-                  Detail
-                </Link>
-              </Button>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <UpdateUserDialog userId={row.original.userId} dialog="artisan" />
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <BlacklistArtisan artisanId={row.original.artisanId} />
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <DeleteArtisanDialog artisanId={row.original.artisanId} />
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
-    },
-  },
 ];
 
-export const ArtisanTable = () => {
-  const [data] = api.listing.getArtisans.useSuspenseQuery();
+export const SponsorMembershipTable = () => {
+  const [data] = api.member.getSponsorMemberships.useSuspenseQuery();
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState<string>("");
   const [sorting, setSorting] = useState<SortingState>([]);
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
+    phone: false,
+    focusArea: false,
+  });
   const [rowSelection, setRowSelection] = useState({});
 
   const [{ pageIndex, pageSize }, setPagination] = useState({
@@ -397,8 +404,8 @@ export const ArtisanTable = () => {
   return (
     <Card className="w-full shadow-sm">
       <CardHeader className="pb-2">
-        <CardTitle>Artisan Directory</CardTitle>
-        <CardDescription>Browse and manage registered artisans</CardDescription>
+        <CardTitle>Sponsorship Directory</CardTitle>
+        <CardDescription>Browse and manage sponsors</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="flex w-full flex-col gap-4">
@@ -444,9 +451,7 @@ export const ArtisanTable = () => {
                             column.toggleVisibility(!!value)
                           }
                         >
-                          {column.id === "fullName"
-                            ? "Full Name"
-                            : column.id.replace(/([A-Z])/g, " $1").trim()}
+                          {column.id.replace(/([A-Z])/g, " $1").trim()}
                         </DropdownMenuCheckboxItem>
                       );
                     })}
@@ -458,15 +463,15 @@ export const ArtisanTable = () => {
             <div className="flex flex-1 flex-col gap-2 sm:flex-row">
               <div className="relative flex-1 md:max-w-xs">
                 <Input
-                  placeholder="Filter by specialty..."
+                  placeholder="Filter by sponsor type..."
                   value={
                     (table
-                      .getColumn("craftSpecialty")
+                      .getColumn("sponsorType")
                       ?.getFilterValue() as string) ?? ""
                   }
                   onChange={(event) =>
                     table
-                      .getColumn("craftSpecialty")
+                      .getColumn("sponsorType")
                       ?.setFilterValue(event.target.value)
                   }
                   className="w-full"
@@ -474,15 +479,15 @@ export const ArtisanTable = () => {
               </div>
               <div className="relative flex-1 md:max-w-xs">
                 <Input
-                  placeholder="Filter by skill level..."
+                  placeholder="Filter by tier..."
                   value={
                     (table
-                      .getColumn("craftSkill")
+                      .getColumn("tier")
                       ?.getFilterValue() as string) ?? ""
                   }
                   onChange={(event) =>
                     table
-                      .getColumn("craftSkill")
+                      .getColumn("tier")
                       ?.setFilterValue(event.target.value)
                   }
                   className="w-full"
@@ -490,14 +495,15 @@ export const ArtisanTable = () => {
               </div>
               <div className="relative flex-1 md:max-w-xs">
                 <Input
-                  placeholder="Filter by status..."
+                  placeholder="Filter by industry..."
                   value={
-                    (table.getColumn("status")?.getFilterValue() as string) ??
-                    ""
+                    (table
+                      .getColumn("industry")
+                      ?.getFilterValue() as string) ?? ""
                   }
                   onChange={(event) =>
                     table
-                      .getColumn("status")
+                      .getColumn("industry")
                       ?.setFilterValue(event.target.value)
                   }
                   className="w-full"
