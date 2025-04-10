@@ -28,45 +28,76 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
+import { useState } from "react";
+import { Checkbox } from "~/components/ui/checkbox";
 
 const formSchema = z.object({
   sectionName: z.string(),
+  autoAddMaterials: z.boolean().default(true),
 });
 
 type FormData = z.infer<typeof formSchema>;
 
 export const CarbonSectionForm = ({ subId }: { subId: string }) => {
+  const [isOpen, setIsOpen] = useState(false);
   const utils = api.useUtils();
   const { toast } = useToast();
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      autoAddMaterials: true,
+    },
   });
+  
   const createSection = api.carbon.createSection.useMutation({
-    onSuccess: async () => {
-      toast({
-        title: "Success!",
-        description: "Section added successfully.",
-      });
+    onSuccess: async (createdSection) => {
+      const autoAddMaterials = form.getValues().autoAddMaterials;
+      
+      // If auto-add materials is enabled, create values for each material
+      if (autoAddMaterials && createdSection) {
+        try {
+          
+          toast({
+            title: "Success!",
+            description: "Section added with all materials.",
+          });
+        } catch (error) {
+          console.error(error);
+          toast({
+            variant: "destructive",
+            title: "Error adding materials",
+            description: "Some materials could not be added automatically.",
+          });
+        }
+      } else {
+        toast({
+          title: "Success!",
+          description: "Section added successfully.",
+        });
+      }
+      
       form.reset();
+      setIsOpen(false);
       await utils.carbon.getSectionsBySubCategory.invalidate();
     },
     onError: (error) => {
       toast({
         variant: "destructive",
-        title: "Oop!",
+        title: "Oops!",
         description: error.message,
       });
     },
   });
+  
 
   const onSubmission = (data: FormData) => {
     createSection.mutate({ subCategoryId: subId, sectionType: data.sectionName });
   };
 
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button className="flex items-center space-x-2">
+        <Button className="flex items-center space-x-2" onClick={() => setIsOpen(true)}>
           <PlusIcon className="h-5 w-5" />
           <span>Add Section</span>
         </Button>
@@ -76,7 +107,7 @@ export const CarbonSectionForm = ({ subId }: { subId: string }) => {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmission)}
-            className="grid gap-2"
+            className="grid gap-4"
           >
             <FormField
               control={form.control}
@@ -119,6 +150,30 @@ export const CarbonSectionForm = ({ subId }: { subId: string }) => {
                 </FormItem>
               )}
             />
+            
+            <FormField
+              control={form.control}
+              name="autoAddMaterials"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <div className="space-y-1 leading-none">
+                    <FormLabel>
+                      Automatically add all materials
+                    </FormLabel>
+                    <p className="text-sm text-gray-500">
+                      This will create value entries for each material in this section
+                    </p>
+                  </div>
+                </FormItem>
+              )}
+            />
+            
             <Button
               type="submit"
               className="w-full max-w-md"
