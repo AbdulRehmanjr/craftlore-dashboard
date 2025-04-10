@@ -17,15 +17,15 @@ export default function HomePage() {
             />
           </div>
           
-          <h1 className="mb-6 text-center text-2xl font-medium tracking-wide text-amber-800 dark:text-amber-300">
+          <h1 className="mb-6 text-center text-2xl font-medium tracking-wide text-secondary">
             Welcome to <span className="font-bold">Craftlore</span>
           </h1>
           
           <LoginForm />
           
           <div className="mt-4 text-center">
-            <p className="text-xs text-gray-600 dark:text-gray-400">
-              First time here? <Link href="/register" className="text-amber-600 hover:text-amber-800 dark:text-amber-400 dark:hover:text-amber-300">Create an account</Link>
+            <p className="text-xs text-primary">
+              First time here? <Link href="/register" className="text-secondary hover:text-secondary/80">Create an account</Link>
             </p>
           </div>
         </div>
@@ -63,10 +63,10 @@ export default function HomePage() {
               {/* Middle Content - Main Heading and Features */}
               <div className="max-w-lg text-center">
                 <h2 className="mb-6 text-4xl font-light leading-tight tracking-wide">
-                  Your all-in-one tool to <span className="font-bold text-amber-300">manage</span> your crafting journey
+                  Your all-in-one tool to <span className="font-bold text-secondary">manage</span> your crafting journey
                 </h2>
                 
-                <p className="mb-8 text-lg font-light text-gray-200">
+                <p className="mb-8 text-lg font-light text-primary">
                   Track supplies, organize projects, and connect with fellow crafters in one beautiful platform.
                 </p>
                 
@@ -79,15 +79,15 @@ export default function HomePage() {
                     { title: "Community", desc: "Share & learn together" }
                   ].map((feature) => (
                     <div key={feature.title} className="rounded-xl bg-white/5 p-4 text-left backdrop-blur-md transition-all hover:bg-white/10">
-                      <h3 className="text-lg font-medium">{feature.title}</h3>
-                      <p className="text-sm text-gray-300">{feature.desc}</p>
+                      <h3 className="text-lg font-medium text-white">{feature.title}</h3>
+                      <p className="text-sm text-white">{feature.desc}</p>
                     </div>
                   ))}
                 </div>
                 
                 {/* Craft Categories */}
                 <div className="mt-8">
-                  <div className="mb-2 text-left text-xs uppercase tracking-wider">Popular Craft Categories</div>
+                  <div className="mb-2 text-left text-xs uppercase tracking-wider text-white">Popular Craft Categories</div>
                   <div className="flex flex-wrap gap-2">
                     {["Knitting", "Crochet", "Sewing", "Embroidery", "Quilting", "Pottery"].map((tag) => (
                       <span key={tag} className="rounded-full border border-white/20 px-3 py-1 text-sm transition-colors hover:bg-white/10">
@@ -101,20 +101,20 @@ export default function HomePage() {
               {/* Bottom Section - Testimonial and Contact */}
               <div className="w-full">
                 <div className="mb-6 flex items-start space-x-4 rounded-lg bg-black/20 p-4 backdrop-blur-sm">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-600">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary">
                     <span className="text-sm font-bold">EC</span>
                   </div>
                   <div>
-                    <p className="mb-1 text-sm italic">&quot;Craftlore has transformed how I organize my yarn stash and track my knitting projects. I can finally see everything I have at a glance!&quot;</p>
-                    <p className="text-xs text-gray-300">— Emma C., Premium Member</p>
+                    <p className="mb-1 text-sm italic text-white">&quot;Craftlore has transformed how I organize my yarn stash and track my knitting projects. I can finally see everything I have at a glance!&quot;</p>
+                    <p className="text-xs text-white">— Emma C., Premium Member</p>
                   </div>
                 </div>
                 
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-light">Questions or support?</p>
+                    <p className="text-sm font-light text-white">Questions or support?</p>
                     <Link 
-                      className="text-sm text-amber-300 transition-colors hover:text-amber-200" 
+                      className="text-sm text-white transition-colors hover:text-secondary/80" 
                       href="mailto:office@craftlore.com"
                     >
                       office@craftlore.com
