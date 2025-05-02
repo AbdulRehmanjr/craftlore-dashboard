@@ -19,7 +19,7 @@ const data = {
       icon: Home,
     },
     {
-      title: "B2B",
+      title: "B2B - Listing",
       url: "#",
       icon: Grid,
       items: [

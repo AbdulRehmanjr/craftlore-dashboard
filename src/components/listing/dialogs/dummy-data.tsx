@@ -89,9 +89,11 @@ export const AddListingDialog = () => {
         title: "Success",
         description: "Listing created successfully",
       });
-      await utils.listing.getArtisans.refetch();
-      await utils.listing.getBusinesses.refetch();
-      await utils.listing.getInstitutes.refetch();
+      await Promise.all([
+        utils.listing.getArtisans.refetch(),
+        utils.listing.getBusinesses.refetch(),
+        utils.listing.getInstitutes.refetch(),
+      ]); 
     },
     onError: (error) => {
       toast({

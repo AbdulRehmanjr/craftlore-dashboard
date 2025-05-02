@@ -72,21 +72,24 @@ model Artisan {
 }
 
 model Business {
-  businessId       String          @id @default(cuid())
-  businessName     String          @default("none")
-  businessEmail    String          @unique
-  businessAddress  String          @default("none")
-  businessType     BusinessLevel   @default(None)
-  businessSold     String          @default("none")
-  businessEmployee Int             @default(0)
-  documents        String[]        @default([])
-  status           String          @default("active")
-  listingCriteria  String
-  userId           String
-  businessMarket   MarketType      @default(None)
-  yearOfOperation  Int             @default(1)
-  criteria         LisitingCritera @relation(fields: [listingCriteria], references: [criteraId], onDelete: Cascade)
-  user             User            @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  businessId        String          @id @default(cuid())
+  businessName      String          @default("none")
+  businessEmail     String          @unique
+  businessAddress   String          @default("none")
+  businessType      BusinessLevel   @default(None)
+  businessSold      String          @default("none")
+  businessEmployee  Int             @default(0)
+  documents         String[]        @default([])
+  status            String          @default("active")
+  listingCriteria   String
+  userId            String
+  businessMarket    MarketType      @default(None)
+  yearOfOperation   Int             @default(1)
+  businessNetwork   String          @default("none")
+  businessStructure String          @default("none")
+  businessWebsite   String          @default("none")
+  criteria          LisitingCritera @relation(fields: [listingCriteria], references: [criteraId], onDelete: Cascade)
+  user              User            @relation(fields: [userId], references: [userId], onDelete: Cascade)
 
   @@index([businessEmail])
 }

@@ -292,6 +292,9 @@ export const updationRouter = createTRPCRouter({
           "Pending",
           "Actice"
         ]).transform(val => val as Status),
+        businessStructure: z.string(),
+        businessNetwork: z.string(),
+        businessWebsite: z.string(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -344,6 +347,9 @@ export const updationRouter = createTRPCRouter({
             status: input.status,
             businessMarket: input.businessMarket,
             yearOfOperation: input.yearOfOperation,
+            businessStructure: input.businessStructure,
+            businessNetwork: input.businessNetwork,
+            businessWebsite: input.businessWebsite,
             documents: input.documents || existingBusiness.documents,
           },
         }),
