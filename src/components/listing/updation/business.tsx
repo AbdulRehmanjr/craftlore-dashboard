@@ -42,9 +42,17 @@ const EditBusinessSchema = z.object({
   // Business model fields
   businessId: z.string(),
   businessName: z.string().min(1, { message: "Business name is required" }),
-  businessEmail: z.string().email({ message: "Please enter a valid email address" }),
+  businessEmail: z
+    .string()
+    .email({ message: "Please enter a valid email address" }),
   businessAddress: z.string(),
-  businessType: z.enum(["None", "Large_Enterprice", "Mid_sized_Business", "Small_Business", "Startup"]),
+  businessType: z.enum([
+    "None",
+    "Large_Enterprice",
+    "Mid_sized_Business",
+    "Small_Business",
+    "Startup",
+  ]),
   businessSold: z.string(),
   businessEmployee: z.coerce.number().min(0),
   status: z.string(),
@@ -52,15 +60,26 @@ const EditBusinessSchema = z.object({
   documents: z.array(z.string()),
   businessMarket: z.enum(["None", "Local", "National", "International"]),
   yearOfOperation: z.coerce.number().min(1),
-  
+
   // User model fields
   userId: z.string(),
   fullName: z.string().min(1, { message: "Full name is required" }),
   phone: z.string(),
   email: z.string().email({ message: "Please enter a valid email address" }),
   address: z.string(),
-  registerType: z.enum(["None", "Artisan", "Business", "Institution", "BuyerMembership", "CorpoMembership", "SponsorMembership"]),
+  registerType: z.enum([
+    "None",
+    "Artisan",
+    "Business",
+    "Institution",
+    "BuyerMembership",
+    "CorpoMembership",
+    "SponsorMembership",
+  ]),
   userStatus: z.enum(["Pending", "Actice"]),
+  businessStructure: z.string(),
+  businessNetwork: z.string(),
+  businessWebsite: z.string(),
 });
 
 type EditBusinessFormValues = z.infer<typeof EditBusinessSchema>;
@@ -72,26 +91,29 @@ type ComponentProps = {
 export const EditBusiness = ({ businessId }: ComponentProps) => {
   const { toast } = useToast();
 
-  const [business] = api.updation.getBusinessById.useSuspenseQuery({ businessId });
-
-  const updateBusinessMutation = api.updation.updateBusinessWithUser.useMutation({
-    onSuccess: () => {
-    
-      toast({
-        title: "Success",
-        description: "Business information updated successfully.",
-        variant: "default",
-        className: "bg-green-50 text-green-800 border-green-300",
-      });
-    },
-    onError: (error) => {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to update business information.",
-        variant: "destructive",
-      });
-    },
+  const [business] = api.updation.getBusinessById.useSuspenseQuery({
+    businessId,
   });
+
+  const updateBusinessMutation =
+    api.updation.updateBusinessWithUser.useMutation({
+      onSuccess: () => {
+        toast({
+          title: "Success",
+          description: "Business information updated successfully.",
+          variant: "default",
+          className: "bg-green-50 text-green-800 border-green-300",
+        });
+      },
+      onError: (error) => {
+        toast({
+          title: "Error",
+          description:
+            error.message || "Failed to update business information.",
+          variant: "destructive",
+        });
+      },
+    });
 
   const form = useForm<EditBusinessFormValues>({
     resolver: zodResolver(EditBusinessSchema),
@@ -109,7 +131,10 @@ export const EditBusiness = ({ businessId }: ComponentProps) => {
       documents: [],
       businessMarket: "None",
       yearOfOperation: 1,
-      
+      businessStructure: "none",
+      businessNetwork: "none",
+      businessWebsite: "none",
+
       // User fields
       userId: "",
       fullName: "",
@@ -124,33 +149,61 @@ export const EditBusiness = ({ businessId }: ComponentProps) => {
   useEffect(() => {
     if (business && business.user) {
       // Explicitly parse and cast enum values to ensure correct type validation
-      let parsedBusinessType: "None" | "Large_Enterprice" | "Mid_sized_Business" | "Small_Business" | "Startup" = "None";
-      if (business.businessType === "None" || business.businessType === "Large_Enterprice" || 
-          business.businessType === "Mid_sized_Business" || business.businessType === "Small_Business" || 
-          business.businessType === "Startup") {
+      let parsedBusinessType:
+        | "None"
+        | "Large_Enterprice"
+        | "Mid_sized_Business"
+        | "Small_Business"
+        | "Startup" = "None";
+      if (
+        business.businessType === "None" ||
+        business.businessType === "Large_Enterprice" ||
+        business.businessType === "Mid_sized_Business" ||
+        business.businessType === "Small_Business" ||
+        business.businessType === "Startup"
+      ) {
         parsedBusinessType = business.businessType;
       }
-      
-      let parsedMarket: "None" | "Local" | "National" | "International" = "None";
-      if (business.businessMarket === "None" || business.businessMarket === "Local" || 
-          business.businessMarket === "National" || business.businessMarket === "International") {
+
+      let parsedMarket: "None" | "Local" | "National" | "International" =
+        "None";
+      if (
+        business.businessMarket === "None" ||
+        business.businessMarket === "Local" ||
+        business.businessMarket === "National" ||
+        business.businessMarket === "International"
+      ) {
         parsedMarket = business.businessMarket;
       }
-      
-      let parsedRegisterType: "None" | "Artisan" | "Business" | "Institution" | 
-        "BuyerMembership" | "CorpoMembership" | "SponsorMembership" = "Business";
-      if (business.user.registerType === "None" || business.user.registerType === "Artisan" || 
-          business.user.registerType === "Business" || business.user.registerType === "Institution" ||
-          business.user.registerType === "BuyerMembership" || business.user.registerType === "CorpoMembership" ||
-          business.user.registerType === "SponsorMembership") {
+
+      let parsedRegisterType:
+        | "None"
+        | "Artisan"
+        | "Business"
+        | "Institution"
+        | "BuyerMembership"
+        | "CorpoMembership"
+        | "SponsorMembership" = "Business";
+      if (
+        business.user.registerType === "None" ||
+        business.user.registerType === "Artisan" ||
+        business.user.registerType === "Business" ||
+        business.user.registerType === "Institution" ||
+        business.user.registerType === "BuyerMembership" ||
+        business.user.registerType === "CorpoMembership" ||
+        business.user.registerType === "SponsorMembership"
+      ) {
         parsedRegisterType = business.user.registerType;
       }
-      
+
       let parsedUserStatus: "Pending" | "Actice" = "Pending";
-      if (business.user.status === "Pending" || business.user.status === "Actice") {
+      if (
+        business.user.status === "Pending" ||
+        business.user.status === "Actice"
+      ) {
         parsedUserStatus = business.user.status;
       }
-      
+
       // Reset form with properly validated values
       form.reset({
         // Business fields
@@ -166,17 +219,20 @@ export const EditBusiness = ({ businessId }: ComponentProps) => {
         documents: business.documents ?? [],
         businessMarket: parsedMarket,
         yearOfOperation: business.yearOfOperation ?? 1,
-        
+
         // User fields
         userId: business.userId,
         fullName: business.user.fullName ?? "none",
         phone: business.user.phone ?? "none",
         email: business.user.email ?? "none",
         address: business.user.address ?? "none",
+        businessStructure: business.businessStructure ?? "none",
+        businessNetwork: business.businessNetwork ?? "none",
+        businessWebsite: business.businessWebsite ?? "none",
         registerType: parsedRegisterType,
         userStatus: parsedUserStatus,
       });
-      
+
       // Force an immediate update for select fields
       setTimeout(() => {
         form.setValue("businessType", parsedBusinessType);
@@ -199,7 +255,7 @@ export const EditBusiness = ({ businessId }: ComponentProps) => {
       address: data.address || "none",
       documents: data.documents || [],
     };
-    
+
     updateBusinessMutation.mutate(formattedData);
   };
 
@@ -208,29 +264,27 @@ export const EditBusiness = ({ businessId }: ComponentProps) => {
   }
 
   return (
-    <Card className="max-w-4xl mx-auto">
+    <Card className="mx-auto max-w-4xl">
       <CardHeader>
         <CardTitle>Edit Business Profile</CardTitle>
-        <CardDescription>
-          Update business and user information
-        </CardDescription>
+        <CardDescription>Update business and user information</CardDescription>
       </CardHeader>
-      
+
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <CardContent className="space-y-6">
             <Tabs defaultValue="business" className="w-full">
-              <TabsList className="grid grid-cols-2 mb-6">
+              <TabsList className="mb-6 grid grid-cols-2">
                 <TabsTrigger value="business">Business Details</TabsTrigger>
                 <TabsTrigger value="user">User Information</TabsTrigger>
               </TabsList>
-              
+
               <TabsContent value="business" className="space-y-6">
                 <div className="space-y-2">
                   <h3 className="text-lg font-medium">Business Information</h3>
                   <Separator />
                 </div>
-                
+
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <FormField
                     control={form.control}
@@ -256,10 +310,10 @@ export const EditBusiness = ({ businessId }: ComponentProps) => {
                       <FormItem>
                         <FormLabel>Business Email</FormLabel>
                         <FormControl>
-                          <Input 
-                            type="email" 
-                            placeholder="Business email" 
-                            {...field} 
+                          <Input
+                            type="email"
+                            placeholder="Business email"
+                            {...field}
                           />
                         </FormControl>
                         <FormDescription>
@@ -277,10 +331,10 @@ export const EditBusiness = ({ businessId }: ComponentProps) => {
                       <FormItem>
                         <FormLabel>Business Address</FormLabel>
                         <FormControl>
-                          <Textarea 
-                            placeholder="Business address" 
-                            className="resize-none" 
-                            {...field} 
+                          <Textarea
+                            placeholder="Business address"
+                            className="resize-none"
+                            {...field}
                           />
                         </FormControl>
                         <FormDescription>
@@ -290,7 +344,130 @@ export const EditBusiness = ({ businessId }: ComponentProps) => {
                       </FormItem>
                     )}
                   />
+                  <FormField
+                    control={form.control}
+                    name="businessStructure"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Legal Structure</FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                          value={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select legal structure" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="none">None</SelectItem>
+                            <SelectItem value="Sole_Proprietorship">
+                              Sole Proprietorship
+                            </SelectItem>
+                            <SelectItem value="Partnership">
+                              Partnership
+                            </SelectItem>
+                            <SelectItem value="Limited_Liability_Partnership">
+                              Limited Liability Partnership
+                            </SelectItem>
+                            <SelectItem value="Private_Limited">
+                              Private Limited
+                            </SelectItem>
+                            <SelectItem value="Public_Limited">
+                              Public Limited
+                            </SelectItem>
+                            <SelectItem value="Cooperative_Society">
+                              Cooperative Society
+                            </SelectItem>
+                            {/* Additional three options */}
+                            <SelectItem value="Trust">Trust</SelectItem>
+                            <SelectItem value="Nonprofit_Organization">
+                              Nonprofit Organization
+                            </SelectItem>
+                            <SelectItem value="Social_Enterprise">
+                              Social Enterprise
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormDescription>
+                          The legal structure of your business
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
+                  <FormField
+                    control={form.control}
+                    name="businessNetwork"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Business Network</FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                          value={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select network type" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="none">None</SelectItem>
+                            <SelectItem value="Affiliated">
+                              Affiliated
+                            </SelectItem>
+                            <SelectItem value="Subsidiary">
+                              Subsidiary
+                            </SelectItem>
+                            <SelectItem value="Individual">
+                              Individual
+                            </SelectItem>
+                            <SelectItem value="Network">Network</SelectItem>
+                            <SelectItem value="Franchise">Franchise</SelectItem>
+                            <SelectItem value="Consignment_Partner">
+                              Consignment Partner
+                            </SelectItem>
+                            <SelectItem value="Retail_Partner">
+                              Retail Partner
+                            </SelectItem>
+                            <SelectItem value="Event_Based_Partner">
+                              Event-Based Partner
+                            </SelectItem>
+                            <SelectItem value="Import_Export_Partner">
+                              Import-Export Partner
+                            </SelectItem>
+                            <SelectItem value="Auction_Platform_Member">
+                              Auction Platform Member
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormDescription>
+                          The business network or affiliation type
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="businessWebsite"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Business Website</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Enter website URL" {...field} />
+                        </FormControl>
+                        <FormDescription>
+                          Your business website URL
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                   <FormField
                     control={form.control}
                     name="businessType"
@@ -309,9 +486,15 @@ export const EditBusiness = ({ businessId }: ComponentProps) => {
                           </FormControl>
                           <SelectContent>
                             <SelectItem value="None">None</SelectItem>
-                            <SelectItem value="Large_Enterprice">Large Enterprise</SelectItem>
-                            <SelectItem value="Mid_sized_Business">Mid-sized Business</SelectItem>
-                            <SelectItem value="Small_Business">Small Business</SelectItem>
+                            <SelectItem value="Large_Enterprice">
+                              Large Enterprise
+                            </SelectItem>
+                            <SelectItem value="Mid_sized_Business">
+                              Mid-sized Business
+                            </SelectItem>
+                            <SelectItem value="Small_Business">
+                              Small Business
+                            </SelectItem>
                             <SelectItem value="Startup">Startup</SelectItem>
                           </SelectContent>
                         </Select>
@@ -387,12 +570,12 @@ export const EditBusiness = ({ businessId }: ComponentProps) => {
                     )}
                   />
                 </div>
-                
-                <div className="space-y-2 mt-6">
+
+                <div className="mt-6 space-y-2">
                   <h3 className="text-lg font-medium">Market & Status</h3>
                   <Separator />
                 </div>
-                
+
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <FormField
                     control={form.control}
@@ -414,7 +597,9 @@ export const EditBusiness = ({ businessId }: ComponentProps) => {
                             <SelectItem value="None">None</SelectItem>
                             <SelectItem value="Local">Local</SelectItem>
                             <SelectItem value="National">National</SelectItem>
-                            <SelectItem value="International">International</SelectItem>
+                            <SelectItem value="International">
+                              International
+                            </SelectItem>
                           </SelectContent>
                         </Select>
                         <FormDescription>
@@ -446,7 +631,9 @@ export const EditBusiness = ({ businessId }: ComponentProps) => {
                             <SelectItem value="pending">Pending</SelectItem>
                             <SelectItem value="inactive">Inactive</SelectItem>
                             <SelectItem value="suspended">Suspended</SelectItem>
-                            <SelectItem value="blacklist">Blacklisted</SelectItem>
+                            <SelectItem value="blacklist">
+                              Blacklisted
+                            </SelectItem>
                           </SelectContent>
                         </Select>
                         <FormDescription>
@@ -458,13 +645,15 @@ export const EditBusiness = ({ businessId }: ComponentProps) => {
                   />
                 </div>
               </TabsContent>
-              
+
               <TabsContent value="user" className="space-y-6">
                 <div className="space-y-2">
-                  <h3 className="text-lg font-medium">Owner/Representative Information</h3>
+                  <h3 className="text-lg font-medium">
+                    Owner/Representative Information
+                  </h3>
                   <Separator />
                 </div>
-                
+
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <FormField
                     control={form.control}
@@ -473,7 +662,10 @@ export const EditBusiness = ({ businessId }: ComponentProps) => {
                       <FormItem>
                         <FormLabel>Full Name</FormLabel>
                         <FormControl>
-                          <Input placeholder="Full name of representative" {...field} />
+                          <Input
+                            placeholder="Full name of representative"
+                            {...field}
+                          />
                         </FormControl>
                         <FormDescription>
                           The business owner or representative&apos;s name
@@ -490,10 +682,10 @@ export const EditBusiness = ({ businessId }: ComponentProps) => {
                       <FormItem>
                         <FormLabel>Contact Email</FormLabel>
                         <FormControl>
-                          <Input 
-                            type="email" 
-                            placeholder="Contact email address" 
-                            {...field} 
+                          <Input
+                            type="email"
+                            placeholder="Contact email address"
+                            {...field}
                           />
                         </FormControl>
                         <FormDescription>
@@ -511,14 +703,12 @@ export const EditBusiness = ({ businessId }: ComponentProps) => {
                       <FormItem>
                         <FormLabel>Phone Number</FormLabel>
                         <FormControl>
-                          <Input 
-                            placeholder="Contact phone number" 
-                            {...field} 
+                          <Input
+                            placeholder="Contact phone number"
+                            {...field}
                           />
                         </FormControl>
-                        <FormDescription>
-                          Contact phone number
-                        </FormDescription>
+                        <FormDescription>Contact phone number</FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -531,26 +721,26 @@ export const EditBusiness = ({ businessId }: ComponentProps) => {
                       <FormItem>
                         <FormLabel>Personal Address</FormLabel>
                         <FormControl>
-                          <Textarea 
-                            placeholder="Personal address" 
-                            className="resize-none" 
-                            {...field} 
+                          <Textarea
+                            placeholder="Personal address"
+                            className="resize-none"
+                            {...field}
                           />
                         </FormControl>
                         <FormDescription>
-                          Personal or contact address 
+                          Personal or contact address
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
                 </div>
-                
-                <div className="space-y-2 mt-6">
+
+                <div className="mt-6 space-y-2">
                   <h3 className="text-lg font-medium">Account Information</h3>
                   <Separator />
                 </div>
-                
+
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <FormField
                     control={form.control}
@@ -572,15 +762,21 @@ export const EditBusiness = ({ businessId }: ComponentProps) => {
                             <SelectItem value="None">None</SelectItem>
                             <SelectItem value="Artisan">Artisan</SelectItem>
                             <SelectItem value="Business">Business</SelectItem>
-                            <SelectItem value="Institution">Institution</SelectItem>
-                            <SelectItem value="BuyerMembership">Buyer Membership</SelectItem>
-                            <SelectItem value="CorpoMembership">Corporate Membership</SelectItem>
-                            <SelectItem value="SponsorMembership">Sponsor Membership</SelectItem>
+                            <SelectItem value="Institution">
+                              Institution
+                            </SelectItem>
+                            <SelectItem value="BuyerMembership">
+                              Buyer Membership
+                            </SelectItem>
+                            <SelectItem value="CorpoMembership">
+                              Corporate Membership
+                            </SelectItem>
+                            <SelectItem value="SponsorMembership">
+                              Sponsor Membership
+                            </SelectItem>
                           </SelectContent>
                         </Select>
-                        <FormDescription>
-                          Type of registration
-                        </FormDescription>
+                        <FormDescription>Type of registration</FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -617,7 +813,7 @@ export const EditBusiness = ({ businessId }: ComponentProps) => {
                 </div>
               </TabsContent>
             </Tabs>
-            
+
             {/* Hidden fields that need to be passed but not edited */}
             <input type="hidden" {...form.register("businessId")} />
             <input type="hidden" {...form.register("userId")} />

@@ -22,12 +22,6 @@ export default function HomePage() {
           </h1>
           
           <LoginForm />
-          
-          <div className="mt-4 text-center">
-            <p className="text-xs text-primary">
-              First time here? <Link href="/register" className="text-secondary hover:text-secondary/80">Create an account</Link>
-            </p>
-          </div>
         </div>
       </section>
       
